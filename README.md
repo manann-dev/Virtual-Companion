@@ -12,10 +12,14 @@ activate Env
 
 # Step2:
 
+set huggingface token 
+
+# Step3:
+
 download the model
 
 python download-model.py "MODEL NAME"
 
-# Step3:
+# Step4:
 
 Run the file start.bat
