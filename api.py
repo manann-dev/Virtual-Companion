@@ -1,5 +1,9 @@
 from flask import Flask, request, jsonify, session, g, current_app, abort
 # from flask_socketio import SocketIO, emit
+import websockets
+import threading
+import json
+# from flask_socketio import SocketIO, emit
 # import tornado.web
 # import tornado.websocket
 from functools import partial
@@ -450,6 +454,63 @@ def new_reply():
 #         emit('error', {'error': str(e)})
 
 
+async def handle_websocket(websocket, path):
+    async for message in websocket:
+        try:
+            data = json.loads(message)
+            print(f"data ={data}")
+            question = data['question']
+            print(f"questionm = {question}")
+            state = data['state']
+            print(f"state = {state}")
+            required_keys = ['auto_max_new_tokens', 'sampler_priority', 'max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
+            print(f"required_keys = {required_keys}")
+            if not all(key in state for key in required_keys):
+                error_msg = 'Missing required state keys: {}'.format(', '.join(required_keys))
+                await websocket.send(error_msg)
+                return
+
+            grammar_file_name = 'roleplay'
+            grammar = initialize_grammar(grammar_file_name)
+            if grammar is None:
+                error_msg = 'Invalid grammar file'
+                await websocket.send(error_msg)
+                return
+
+            response = None
+            response_generator = generate_reply_HF(question, question, None, state)
+            print(f"response_generator = {response_generator}")
+            response = next(response_generator, "No response generated")
+            for output in response_generator:
+                print(f"output chunk: {output}")
+            response1 = {
+                'results': [
+                    {
+                        'history': {
+                            'internal': [],
+                            'visible': [question, output]
+                        }
+                    }
+                ]
+            }
+            print(f"response1 = {response1}")
+            await websocket.send(json.dumps(response1))
+        except Exception as e:
+            error_msg = str(e)
+            await websocket.send(error_msg)
+
+async def start_websocket_server():
+    async with websockets.serve(handle_websocket, "localhost", 8000):
+        await asyncio.Future()  # run forever
+
+def run_websocket_server():
+    asyncio.run(start_websocket_server())
+
+@app.route('/start_websocket')
+def start_websocket():
+    thread = threading.Thread(target=run_websocket_server)
+    thread.start()
+    return 'WebSocket server started'
 
 
 
