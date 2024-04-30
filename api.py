@@ -1,11 +1,7 @@
 from flask import Flask, request, jsonify, session, g, current_app, abort
-# from flask_socketio import SocketIO, emit
 import websockets
 import threading
 import json
-# from flask_socketio import SocketIO, emit
-# import tornado.web
-# import tornado.websocket
 from functools import partial
 from chat import (
     get_generation_prompt, 
@@ -41,14 +37,12 @@ from tokenizer_auto import initialize_shared_components
 from grammer_utils import initialize_grammar
 from html_generator import generate_basic_html
 import shared as shared
-# import autobahn
-# from autobahn.asyncio.websocket import WebSocketServerProtocol, WebSocketServerFactory
 import asyncio
 
 
 
 app = Flask(__name__)
-# socketio = SocketIO(app)
+
 
 
 
@@ -172,71 +166,6 @@ def chat_api():
         return jsonify({'error': 'Invalid action specified.'}), 400
 
 
-# @app.route('/new_reply', methods=['POST'])
-# def new_reply():
-#     try:
-#         data = request.json
-#         question = data['question']
-#         state = data['state']
-
-#         required_keys = ['sampler_priority','max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
-#         if not all(key in state for key in required_keys):
-#             return jsonify({'error': 'Missing required state keys: {}'.format(', '.join(required_keys))}), 400
-        
-#         state['grammar_string'] = """
-#         root ::= (expr "=" ws term "\\n")+
-#         expr ::= term ([\\-+\\*/] term)*
-#         term ::= ident | num | "(" ws expr ")"
-#         ident ::= [a-z][a-z0-9_]*
-#         ws
-#         num ::= [0-9]+
-#         ws
-#         ws ::= [\\t\\n]*
-#         """
-
-#         response_generator = generate_reply_HF(question, question, None, state)
-#         response = next(response_generator)
-#         return jsonify({'reply': response}), 200
-
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-
-# @app.route('/new_reply', methods=['POST'])
-# def new_reply():
-#     try:
-#         data = request.json
-#         question = data['question']
-#         state = data['state']
-#         required_keys = ['auto_max_new_tokens','sampler_priority', 'max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
-
-#         if not all(key in state for key in required_keys):
-#             return jsonify({'error': 'Missing required state keys: {}'.format(', '.join(required_keys))}), 400
-
-
-#         grammar_file_name = 'c' 
-#         grammar = initialize_grammar(grammar_file_name)
-
-#         if grammar is None:
-#             return jsonify({'error': 'Invalid grammar file'}), 400
-
-#         response_generator = generate_reply_HF(question, question, None, state)
-#         response = {
-#             'results' : [
-#                 {
-#                     'history' : {
-#                         'internal' : [],
-#                         'visible' : [question, response]
-#                     }
-#                 }
-#             ]
-#         }
-#         response1 = generate_basic_html(response)
-        
-#         # response = next(response_generator)
-#         print(f"response: {response1}")
-#         return jsonify({'reply': response1}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
 
 @app.route('/new_reply', methods=['POST'])
 def new_reply():
@@ -283,175 +212,6 @@ def new_reply():
         return jsonify({'error': str(e)}), 500
     
 
-# class MyServerProtocol(WebSocketServerProtocol):
-#     def onConnect(self, request):
-#         print("Client connecting: {}".format(request.peer))
-#
-#     def onOpen(self):
-#         print("WebSocket connection open.")
-#
-#     def onMessage(self, payload, isBinary):
-#         try:
-#             data = payload.decode('utf-8')
-#             print(f"data ={data}")
-#             question = data['question']
-#             print(f"questionm = {question}")
-#             state = data['state']
-#             print(f"state = {state}")
-#             required_keys = ['auto_max_new_tokens', 'sampler_priority', 'max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
-#             print(f"required_keys = {required_keys}")
-#             if not all(key in state for key in required_keys):
-#                 error_msg = 'Missing required state keys: {}'.format(', '.join(required_keys))
-#                 self.sendMessage(error_msg.encode('utf-8'), isBinary)
-#                 return
-#
-#             grammar_file_name = 'roleplay'
-#             grammar = initialize_grammar(grammar_file_name)
-#             if grammar is None:
-#                 error_msg = 'Invalid grammar file'
-#                 self.sendMessage(error_msg.encode('utf-8'), isBinary)
-#                 return
-#
-#             response = None
-#             response_generator = generate_reply_HF(question, question, None, state)
-#             print(f"response_generator = {response_generator}")
-#             response = next(response_generator, "No response generated")
-#             print(f"output chunk: {response}")
-#             response1 = {
-#                 'results': [
-#                     {
-#                         'history': {
-#                             'internal': [],
-#                             'visible': [question, response]
-#                         }
-#                     }
-#                 ]
-#             }
-#             print(f"response1 = {response1}")
-#             self.sendMessage(str(response1).encode('utf-8'), isBinary)
-#         except Exception as e:
-#             error_msg = str(e)
-#             self.sendMessage(error_msg.encode('utf-8'), isBinary)
-#
-#     def onClose(self, wasClean, code, reason):
-#         print("WebSocket connection closed: {}".format(reason))
-#
-#
-# @app.route('/start_websocket')
-# def start_websocket():
-#     # Start the WebSocket server in a separate thread or process
-#     factory = WebSocketServerFactory()
-#     factory.protocol = MyServerProtocol
-#
-#     loop = asyncio.new_event_loop()
-#     asyncio.set_event_loop(loop)
-#     coro = loop.create_server(factory, '127.0.0.1', 8000)
-#     server = loop.run_until_complete(coro)
-#
-#     def run_server():
-#         try:
-#             loop.run_forever()
-#         except KeyboardInterrupt:
-#             pass
-#         finally:
-#             server.close()
-#             loop.close()
-#
-#     import threading
-#     server_thread = threading.Thread(target=run_server)
-#     server_thread.start()
-#
-#     return 'WebSocket server started'
-
-
-
-
-
-
-# @app.route('/new_reply', methods=['POST'])
-# def new_reply():
-#     try:
-#         data = request.json
-#         question = data['question']
-#         state = data['state']
-#         seed = -1
-#         required_keys = ['auto_max_new_tokens', 'sampler_priority', 'max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
-
-#         if not all(key in state for key in required_keys):
-#             return jsonify({'error': 'Missing required state keys: {}'.format(', '.join(required_keys))}), 400
-
-#         grammar_file_name = 'c' 
-#         grammar = initialize_grammar(grammar_file_name)
-
-#         if grammar is None:
-#             return jsonify({'error': 'Invalid grammar file'}), 400
-
-#         response_generator = generate_reply_HF(question, seed, None, state)
-#         response = next(response_generator, "No response generated")  # Provide a default message if no response
-
-#         response1 = {
-#             'results' : [
-#                 {
-#                     'history' : {
-#                         'internal' : [],
-#                         'visible' : [question, response]
-#                     }
-#                 }
-#             ]
-#         }
-#         response_html = generate_basic_html(response1)
-        
-#         print(f"response: {response_html}")
-#         return jsonify({'reply': response_html}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-
-
-
-
-
-
-
-
-# @socketio.on('new__reply')
-# def handle_new_reply(data):
-#     try:
-#         print(f"data ={data}")
-#         question = data['question']
-#         print(f"questionm = {question}")
-#         state = data['state']
-#         print(f"state = {state}")
-#         required_keys = ['auto_max_new_tokens', 'sampler_priority', 'max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
-#         print(f"required_keys = {required_keys}")
-#         if not all(key in state for key in required_keys):
-#             emit('error', {'error': 'Missing required state keys: {}'.format(', '.join(required_keys))})
-#             return
-
-#         grammar_file_name = 'roleplay'
-#         grammar = initialize_grammar(grammar_file_name)
-#         if grammar is None:
-#             emit('error', {'error': 'Invalid grammar file'})
-#             return
-
-#         response = None
-#         response_generator = generate_reply_HF(question, question, None, state)
-#         print(f"response_generator = {response_generator}")
-#         response = next(response_generator, "No response generated")
-#         print(f"output chunk: {response}")
-#         response1 = {
-#             'results': [
-#                 {
-#                     'history': {
-#                         'internal': [],
-#                         'visible': [question, response]
-#                     }
-#                 }
-#             ]
-#         }
-#         print(f"response1 = {response1}")
-#         emit('reply', response1)
-#     except Exception as e:
-#         emit('error', {'error': str(e)})
 
 
 async def handle_websocket(websocket, path):
@@ -514,13 +274,10 @@ def start_websocket():
 
 
 
-@app.before_request
-def setup_app():
-        load_tokenizer()
 
-
-
-
+# @app.before_request
+# def setup_app():
+#         load_tokenizer()
 
 def get_default_state():
     return {
@@ -616,5 +373,4 @@ def get_default_state():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    # socketio.run(app)
 
