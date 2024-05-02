@@ -10,7 +10,7 @@ import traceback
 import numpy as np
 import torch
 import transformers
-from transformers import LogitsProcessorList, is_torch_xpu_available
+from transformers import LogitsProcessorList, is_torch_xpu_available, StoppingCriteriaList
 import shared as shared
 from cache_utils import process_llamacpp_cache
 from callbacks import (
@@ -470,7 +470,7 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
     # state['repetition_penalty'] = character_profile['repetition_penalty']
     try:
         generate_params = {}
-        for k in ['auto_max_new_tokens','custom_token_bans','ban_eos_token','eta_cutoff','epsilon_cutoff','max_new_tokens', 'temperature', 'temperature_last', 'dynamic_temperature', 'dynatemp_low', 'dynatemp_high', 'dynatemp_exponent', 'smoothing_factor', 'smoothing_curve', 'top_p', 'min_p', 'top_k', 'repetition_penalty', 'presence_penalty', 'frequency_penalty', 'repetition_penalty_range', 'typical_p', 'tfs', 'top_a', 'guidance_scale', 'penalty_alpha', 'mirostat_mode', 'mirostat_tau', 'mirostat_eta', 'do_sample', 'encoder_repetition_penalty', 'no_repeat_ngram_size']:
+        for k in ['eta_cutoff','epsilon_cutoff','max_new_tokens', 'temperature', 'temperature_last', 'dynamic_temperature', 'dynatemp_low', 'dynatemp_high', 'dynatemp_exponent', 'smoothing_factor', 'smoothing_curve', 'top_p', 'min_p', 'top_k', 'repetition_penalty', 'presence_penalty', 'frequency_penalty', 'repetition_penalty_range', 'typical_p', 'tfs', 'top_a', 'guidance_scale', 'penalty_alpha', 'mirostat_mode', 'mirostat_tau', 'mirostat_eta', 'do_sample', 'encoder_repetition_penalty', 'no_repeat_ngram_size']:
             if k in state:
                 generate_params[k] = state[k]
 
@@ -567,49 +567,52 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
         if not is_chat and not shared.is_seq2seq:
             yield ''
         valid_generate_params = {k: v for k, v in generate_params.items()
-                                  if k not in ['auto_max_new_tokens', 'custom_token_bans', 'ban_eos_token','skip_special_tokens']}
+                          if k not in ['do_sample', 'top_k', 'top_p']}
         # Generate the entire reply at once.
-        if not state.get('stream', False):  # Corrected line
+        # if not state.get('stream'):  # Corrected line
+        #     with torch.no_grad():
+        #         output = shared.model.generate(**valid_generate_params)[0]
+        #         if cuda:
+        #             output = output.cuda()
+
+        #     starting_from = 0 if shared.is_seq2seq else len(input_ids[0])
+        #     yield get_reply_from_output_ids(output, state, starting_from=starting_from)
+
+        # else:
+
+        def generate_with_streaming(**kwargs):
+            return Iteratorize(generate_with_callback, [], kwargs, callback=None)
+
+        def generate_with_callback(callback=None, *args, **kwargs):
+            # Adjust stopping criteria and other parameters for streaming
+            kwargs['stopping_criteria'].append(Stream(callback_func=callback))
+            clear_torch_cache()
             with torch.no_grad():
-                output = shared.model.generate(**valid_generate_params)[0]
-                if cuda:
-                    output = output.cuda()
+                shared.model.generate(**kwargs)
 
+        with generate_with_streaming(**valid_generate_params) as generator:
+            cumulative_reply = ''
             starting_from = 0 if shared.is_seq2seq else len(input_ids[0])
-            yield get_reply_from_output_ids(output, state, starting_from=starting_from)
+            for output in generator:
+                if output[-1] in eos_token_ids:
+                    break
 
-        else:
+                new_content = get_reply_from_output_ids(output, state, starting_from=starting_from)
+                # Handling of partial unicode characters and other specifics
+                if chr(0xfffd) in new_content:
+                    continue
 
-            def generate_with_callback(callback=None, *args, **kwargs):
-                kwargs['stopping_criteria'].append(Stream(callback_func=callback))
-                clear_torch_cache()
-                with torch.no_grad():
-                    shared.model.generate(**kwargs)
-
-            def generate_with_streaming(**kwargs):
-                return Iteratorize(generate_with_callback, [], kwargs, callback=None)
-
-            with generate_with_streaming(**generate_params) as generator:
-                cumulative_reply = ''
-                starting_from = 0 if shared.is_seq2seq else len(input_ids[0])
-                for output in generator:
-                    if output[-1] in eos_token_ids:
-                        break
-
-                    new_content = get_reply_from_output_ids(output, state, starting_from=starting_from)
-                    # check the partial unicode character
-                    if chr(0xfffd) in new_content:
-                        continue
-
-                    cumulative_reply += new_content
-                    starting_from = len(output)
-                    yield cumulative_reply
+                cumulative_reply += new_content
+                starting_from = len(output)
+                yield cumulative_reply
 
     except Exception as e:
         traceback.print_exc()
         if t1 is None:
-            t1 = time.time()  # Ensure t1 is set if not already
-        print(f'Error occurred. Time until error: {(t1-t0):.2f} seconds')
+            t1 = time.time()
+            original_tokens = len(original_input_ids[0])
+            new_tokens = len(output) - (original_tokens if not shared.is_seq2seq else 0)       
+            print(f'Error occurred. Time until error: {(t1-t0):.2f} seconds')
         raise
     finally:
         if t1 is not None:  # Check if t1 is set before using it

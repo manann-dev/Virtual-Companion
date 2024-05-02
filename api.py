@@ -21,6 +21,7 @@ from text_generation import (
     generate_reply_HF, 
     generate_reply_custom, 
     logger,
+    _generate_reply,
     generate_reply,
     generate_reply_wrapper,
     encode,
@@ -218,17 +219,20 @@ async def handle_websocket(websocket, path):
     async for message in websocket:
         try:
             data = json.loads(message)
-            print(f"data ={data}")
+            print(f"data = {data}")
             question = data['question']
-            print(f"questionm = {question}")
+            print(f"question = {question}")
             state = data['state']
+            state['ban_eos_token'] = False
+            state['custom_token_bans'] = False 
+            state['auto_max_new_tokens'] = False
             print(f"state = {state}")
-            required_keys = ['auto_max_new_tokens', 'sampler_priority', 'max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
-            print(f"required_keys = {required_keys}")
-            if not all(key in state for key in required_keys):
-                error_msg = 'Missing required state keys: {}'.format(', '.join(required_keys))
-                await websocket.send(error_msg)
-                return
+            # required_keys = ['auto_max_new_tokens', 'sampler_priority', 'max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
+            # print(f"required_keys = {required_keys}")
+            # if not all(key in state for key in required_keys):
+            #     error_msg = 'Missing required state keys: {}'.format(', '.join(required_keys))
+            #     await websocket.send(error_msg)
+            #     return
 
             grammar_file_name = 'roleplay'
             grammar = initialize_grammar(grammar_file_name)
@@ -240,24 +244,59 @@ async def handle_websocket(websocket, path):
             response = None
             response_generator = generate_reply_HF(question, question, None, state)
             print(f"response_generator = {response_generator}")
-            response = next(response_generator, "No response generated")
             for output in response_generator:
                 print(f"output chunk: {output}")
-            response1 = {
-                'results': [
-                    {
-                        'history': {
-                            'internal': [],
-                            'visible': [question, output]
+                response1 = {
+                    'results': [
+                        {
+                            'history': {
+                                'internal': [],
+                                'visible': [question, output]
+                            }
                         }
-                    }
-                ]
-            }
-            print(f"response1 = {response1}")
-            await websocket.send(json.dumps(response1))
+                    ]
+                }
+                print(f"response1 = {response1}")
+                await websocket.send(json.dumps(response1))
         except Exception as e:
             error_msg = str(e)
             await websocket.send(error_msg)
+
+# async def handle_websocket(websocket, path):
+#     async for message in websocket:
+#         try:
+#             data = json.loads(message)
+#             question = data['question']
+#             state = data['state']
+#             stopping_strings = data.get('stopping_strings', [])
+#             is_chat = data.get('is_chat', False)
+#             escape_html = data.get('escape_html', False)
+#             custom_stopping_strings = data.get('custom_stopping_strings', [])
+#             state['ban_eos_token'] = False
+#             state['custom_token_bans'] = False 
+#             state['auto_max_new_tokens'] = False
+
+#             response_generator = _generate_reply(question, state, stopping_strings, is_chat, escape_html, custom_stopping_strings)
+#             for output in response_generator:
+#                 print(f"output chunk: {output}")
+#                 response1 = {
+#                     'results': [
+#                         {
+#                             'history': {
+#                                 'internal': [],
+#                                 'visible': [question, output]
+#                             }
+#                         }
+#                     ]
+#             }
+#                 print(f"response1 = {response1}")
+#                 await websocket.send(json.dumps(response1))
+#         except Exception as e:
+#             error_msg = str(e)
+#             await websocket.send(error_msg)
+
+
+
 
 async def start_websocket_server():
     async with websockets.serve(handle_websocket, "localhost", 8000):
