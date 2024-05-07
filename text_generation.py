@@ -6,6 +6,8 @@ import random
 import re
 import time
 import traceback
+import threading
+
 
 import numpy as np
 import torch
@@ -24,6 +26,8 @@ from logits_process import GrammarConstrainedLogitsProcessor
 from html_generator import generate_basic_html
 from logging_colors import logger
 from models import clear_torch_cache, local_rank
+
+shared.generation_lock = threading.Lock()
 # from chat import load_character
 
 def generate_reply(*args, **kwargs):
@@ -44,8 +48,87 @@ def generate_reply(*args, **kwargs):
 #         shared.generation_lock.release()
 
 
-def _generate_reply(question, state, stopping_strings=None, is_chat=False, escape_html=False, for_ui=False):
+# def _generate_reply(question, state, stopping_strings=None, is_chat=False, escape_html=False, for_ui=False):
 
+#     # Find the appropriate generation function
+#     generate_func = apply_extensions('custom_generate_reply')
+#     if generate_func is None:
+#         if shared.model_name == 'None' or shared.model is None:
+#             logger.error("No model is loaded! Select one in the Model tab.")
+#             yield ''
+#             return
+        
+#         response = generate_func(question, state)
+#         yield response
+
+#         # if shared.model.__class__.__name__ in ['LlamaCppModel', 'Exllamav2Model']:
+#         #     generate_func = generate_reply_custom
+#         # else:
+#             # generate_func = generate_reply_HF
+
+
+#     if generate_func != generate_reply_HF and shared.args.verbose:
+#         logger.info("PROMPT=")
+#         print(question)
+#         print()
+
+#     # Prepare the input
+#     original_question = question
+#     if not is_chat:
+#         state = apply_extensions('state', state)
+#         question = apply_extensions('input', question, state)
+
+#     # Find the stopping strings
+#     all_stop_strings = []
+#     for st in (stopping_strings, state['custom_stopping_strings']):
+#         if type(st) is str:
+#             st = ast.literal_eval(f"[{st}]")
+
+#         if type(st) is list and len(st) > 0:
+#             all_stop_strings += st
+
+#     shared.stop_everything = False
+#     clear_torch_cache()
+#     seed = set_manual_seed(state['seed'])
+#     last_update = -1
+#     reply = ''
+#     is_stream = state['stream']
+#     if len(all_stop_strings) > 0 and not state['stream']:
+#         state = copy.deepcopy(state)
+#         state['stream'] = True
+
+#     # Generate
+#     for reply in generate_func(question, original_question, seed, state, stopping_strings, is_chat=is_chat):
+#         reply, stop_found = apply_stopping_strings(reply, all_stop_strings)
+#         if escape_html:
+#             reply = html.escape(reply)
+
+#         if is_stream:
+#             cur_time = time.time()
+
+#             # Limit number of tokens/second to make text readable in real time
+#             if state['max_tokens_second'] > 0:
+#                 diff = 1 / state['max_tokens_second'] - (cur_time - last_update)
+#                 if diff > 0:
+#                     time.sleep(diff)
+
+#                 last_update = time.time()
+#                 yield reply
+#             else:
+#                 yield reply
+
+#         if stop_found or (state['max_tokens_second'] > 0 and shared.stop_everything):
+#             break
+
+#     if not is_chat:
+#         reply = apply_extensions('output', reply, state)
+
+#     yield reply
+
+
+def _generate_reply(question, state, stopping_strings=None, is_chat=False, escape_html=False, for_ui=False):
+    from chat import generate_chat_prompt, get_generation_prompt
+    from extensions import apply_input_extensions
     # Find the appropriate generation function
     generate_func = apply_extensions('custom_generate_reply')
     if generate_func is None:
@@ -53,13 +136,13 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
             logger.error("No model is loaded! Select one in the Model tab.")
             yield ''
             return
-
+        
         if shared.model.__class__.__name__ in ['LlamaCppModel', 'Exllamav2Model']:
             generate_func = generate_reply_custom
         else:
             generate_func = generate_reply_HF
 
-    if generate_func != generate_reply_HF and shared.args.verbose:
+    if generate_func!= generate_reply_HF and shared.args.verbose:
         logger.info("PROMPT=")
         print(question)
         print()
@@ -68,54 +151,33 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
     original_question = question
     if not is_chat:
         state = apply_extensions('state', state)
-        question = apply_extensions('input', question, state)
-
+        logger.info(f"STATE={state}")
+        question = apply_input_extensions(question, state)
+        logger.info(f"QUESTION={question}")
     # Find the stopping strings
     all_stop_strings = []
     for st in (stopping_strings, state['custom_stopping_strings']):
-        if type(st) is str:
-            st = ast.literal_eval(f"[{st}]")
-
-        if type(st) is list and len(st) > 0:
+        if isinstance(st, str):
+            st = [st]  # Convert string to list
+        if isinstance(st, list) and len(st) > 0:
             all_stop_strings += st
+    # if shared.args.stopping_criteria:
+    #     all_stop_strings.extend(shared.args.stopping_criteria)
 
-    shared.stop_everything = False
-    clear_torch_cache()
-    seed = set_manual_seed(state['seed'])
-    last_update = -1
-    reply = ''
-    is_stream = state['stream']
-    if len(all_stop_strings) > 0 and not state['stream']:
-        state = copy.deepcopy(state)
-        state['stream'] = True
+    # Process the prompt
+    prompt = question
+    if is_chat:
+        prompt = generate_chat_prompt(question, state)
+    else:
+        prompt = get_generation_prompt(question, state)
 
-    # Generate
-    for reply in generate_func(question, original_question, seed, state, stopping_strings, is_chat=is_chat):
-        reply, stop_found = apply_stopping_strings(reply, all_stop_strings)
-        if escape_html:
-            reply = html.escape(reply)
+    # Yield the response
+    response = generate_func(prompt, state, all_stop_strings)
+    yield response
 
-        if is_stream:
-            cur_time = time.time()
 
-            # Limit number of tokens/second to make text readable in real time
-            if state['max_tokens_second'] > 0:
-                diff = 1 / state['max_tokens_second'] - (cur_time - last_update)
-                if diff > 0:
-                    time.sleep(diff)
 
-                last_update = time.time()
-                yield reply
-            else:
-                yield reply
 
-        if stop_found or (state['max_tokens_second'] > 0 and shared.stop_everything):
-            break
-
-    if not is_chat:
-        reply = apply_extensions('output', reply, state)
-
-    yield reply
 
 
 # def encode(prompt, add_special_tokens=True, add_bos_token=True, truncation_length=None):

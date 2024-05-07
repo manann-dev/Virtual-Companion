@@ -205,3 +205,9 @@ def apply_extensions(typ, *args, **kwargs):
         raise ValueError(f"Invalid extension type {typ}")
 
     return EXTENSION_MAP[typ](*args, **kwargs)
+
+def apply_input_extensions(input_str, state):
+    for extension, _ in iterator():
+        if hasattr(extension, 'input_modifier'):
+            input_str = extension.input_modifier(input_str, state)
+    return input_str
