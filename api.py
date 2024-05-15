@@ -99,76 +99,6 @@ state = {
 
 app.secret_key = 'manan' 
 
-@app.route('/chat_api', methods=['POST'])
-def chat_api():
-    data = request.json
-    action = data.get('action')
-
-    if action == 'load_model':
-        model_name = "facebook_opt-1.3b"  
-        loader = "Transformers"  
-        try:
-            if 'model_loaded' not in session or data.get('force_reload', False):
-                load_model(model_name, loader)
-                session['model_loaded'] = True
-                return jsonify({"message": "Model loaded successfully"}), 200
-            else:
-                return jsonify({"message": "Model already loaded"}), 200
-        except Exception as e:
-            return jsonify({"error": "Error loading model: " + str(e)}), 500
-
-    elif action == 'load_character':
-        character = data.get('character')
-        name1 = data.get('name1', 'default_name1') 
-        name2 = data.get('name2', 'default_name2')
-
-        if not character:
-            return jsonify({'error': 'Character name is required.'}), 400
-
-        try:
-            name1, name2, picture, greeting, context = load_character(character, name1, name2)
-            session['character'] = character
-            session['context'] = context
-            return jsonify({
-                'message': 'Character loaded successfully',
-                'name1': name1,
-                'name2': name2,
-                'picture': picture,
-                'greeting': greeting,
-                'context': context
-            }), 200
-        except Exception as e:
-            traceback.print_exc()
-            return jsonify({'error': "Error loading character: " + str(e)}), 500
-
-
-    elif action == 'generate_api':
-        try:
-            data = request.json
-            question = data.get('question')
-            original_question = data.get('original_question', question)
-            seed = data.get('seed', -1)
-
-            state = data.get('state', {})
-            preset_name = state.get('preset_name', 'simple-1') 
-            state.update(load_preset(preset_name))
-
-            if not question:
-                return jsonify({'error': 'Question is required.'}), 400
-
-            try:
-                response_generator = generate_reply_HF(question, original_question, seed, state)
-                responses = list(response_generator)
-                return jsonify({'responses': responses}), 200
-            except Exception as e:
-                return jsonify({'error': str(e)}), 500
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
-    else:
-        return jsonify({'error': 'Invalid action specified.'}), 400
-
-
-
 @app.route('/new_reply', methods=['POST'])
 def new_reply():
     try:
@@ -214,54 +144,7 @@ def new_reply():
         return jsonify({'error': str(e)}), 500
     
 
-
-# async def handle_websocket(websocket, path):
-#     async for message in websocket:
-#         try:
-#             data = json.loads(message)
-#             print(f"data = {data}")
-#             question = data['question']
-#             print(f"question = {question}")
-#             state = data['state']
-#             state['ban_eos_token'] = False
-#             state['custom_token_bans'] = False 
-#             state['auto_max_new_tokens'] = False
-#             print(f"state = {state}")
-#             # required_keys = ['auto_max_new_tokens', 'sampler_priority', 'max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
-#             # print(f"required_keys = {required_keys}")
-#             # if not all(key in state for key in required_keys):
-#             #     error_msg = 'Missing required state keys: {}'.format(', '.join(required_keys))
-#             #     await websocket.send(error_msg)
-#             #     return
-
-#             grammar_file_name = 'roleplay'
-#             grammar = initialize_grammar(grammar_file_name)
-#             if grammar is None:
-#                 error_msg = 'Invalid grammar file'
-#                 await websocket.send(error_msg)
-#                 return
-
-#             response = None
-#             response_generator = generate_reply_HF(question, question, None, state)
-#             print(f"response_generator = {response_generator}")
-#             for output in response_generator:
-#                 print(f"output chunk: {output}")
-#                 response1 = {
-#                     'results': [
-#                         {
-#                             'history': {
-#                                 'internal': [],
-#                                 'visible': [question, output]
-#                             }
-#                         }
-#                     ]
-#                 }
-#                 print(f"response1 = {response1}")
-#                 await websocket.send(json.dumps(response1))
-#         except Exception as e:
-#             error_msg = str(e)
-#             await websocket.send(error_msg)
-
+conversation_histories = {}
 
 async def handle_websocket(websocket, path):
     async for message in websocket:
@@ -276,25 +159,26 @@ async def handle_websocket(websocket, path):
             state['auto_max_new_tokens'] = False
             print(f"state = {state}")
 
-            grammar_file_name = 'roleplay'
-            grammar = initialize_grammar(grammar_file_name)
-            if grammar is None:
-                error_msg = 'Invalid grammar file'
-                await websocket.send(error_msg)
-                return
-
             character = 'Sakura Tanaka'  # Define the character here
+
+            # Use the client's WebSocket connection as the key for their conversation history
+            client_id = websocket.remote_address
+            if client_id not in conversation_histories:
+                conversation_histories[client_id] = f"User: {question}\n{character}:"
+            else:
+                conversation_histories[client_id] += f"\nUser: {question}\n{character}:"
+
+            # Prepare the input for the model
+            modified_question = conversation_histories[client_id]
 
             response_generator = generate_reply_HF(question, question, None, state, character=character)
             print(f"response_generator = {response_generator}")
+
             for output in response_generator:
                 print(f"output chunk: {output}")
 
-                # Update conversation history
-                if 'conversation_history' not in state:
-                    state['conversation_history'] = f"User: {question}\n{character}: {output}"
-                else:
-                    state['conversation_history'] += f"\nUser: {question}\n{character}: {output}"
+                # Append the model's output to the conversation history
+                conversation_histories[client_id] += f" {output}"
 
                 response1 = {
                     'results': [
@@ -327,104 +211,6 @@ def start_websocket():
     thread = threading.Thread(target=run_websocket_server)
     thread.start()
     return 'WebSocket server started'
-
-
-
-
-# @app.before_request
-# def setup_app():
-#         load_tokenizer()
-
-def get_default_state():
-    return {
-        'mode': 'chat',
-        'chat_template_str': "Hello, {{ name1 }}. How can I assist you today?",
-        'instruction_template_str': "Please follow these instructions: {{ instructions }}",
-        'name1': 'User',
-        'name2': 'Assistant',
-        'user_bio': '',
-        'context': '',
-        'custom_system_message': '',
-        'history': [],
-        'chat-instruct_command': '',
-        'truncation_length': 512,
-        'max_new_tokens': 150
-    }
-
-# @app.route('/setup', methods=['POST'])
-# def setup_conversation():
-#     data = request.json
-#     state.update(data)  # Update state with provided data
-#     return jsonify({"message": "Setup successful", "state": state}), 200
-
-
-# @app.route('/generate_prompt', methods=['POST'])
-# def generate_prompt():
-#     user_input = request.json.get('user_input', '')
-#     mode = state.get('mode', 'chat')
-#     template_str = state['chat_template_str'] if mode == 'chat' else state['instruction_template_str']
-    
-#     template = jinja_env.from_string(template_str)
-#     messages = [{"role": "user", "content": user_input.strip()}]  # Example: Starting with user input
-
-#     prompt = template.render(messages=messages, name1=state['name1'], name2=state['name2'], user_bio=state['user_bio'])
-#     return jsonify({"prompt": prompt}), 200
-
-
-# @app.route('/load_model', methods=['POST'])
-# def load_model_route():
-#     data = request.json
-#     model_name = data['model_name']
-#     loader = data.get('loader')
-
-#     try:
-#         load_model(model_name, loader)
-#         return jsonify({'message': 'Model loaded successfully'})
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-
-
-# @app.route('/upload_character', methods=['POST'])
-# def upload_character_endpoint():
-#     file = request.files['file']
-#     img = request.files.get('img')
-#     tavern = request.form.get('tavern', False)
-
-#     try:
-#         result = upload_character(file.read(), img=img, tavern=tavern)
-#         return jsonify({'message': 'Character uploaded successfully', 'result': result})
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-
-
-# @app.route('/load_character', methods=['POST'])
-# def load_character_endpoint():
-#     character = request.args.get('character')
-#     name1 = request.args.get('name1')
-#     name2 = request.args.get('name2')
-    
-#     try:
-#         name1, name2, picture, greeting, context = load_character(character, name1, name2)
-#         return jsonify({'name1': name1, 'name2': name2, 'picture': picture, 'greeting': greeting, 'context': context})
-#     except ValueError:
-#         return jsonify({'error': 'Character not found.'}), 404
-
-
-# # Define the delete file endpoint
-# @app.route('/delete_character', methods=['POST'])
-# def delete_file_endpoint():
-#     # Parse request data
-#     data = request.json
-#     file_name = data.get('file_name', '')
-
-#     # Call delete_file function and return response
-#     return delete_file(file_name)
-
-
-# @app.route('/unload_model', methods=['POST'])
-# def unload_model_endpoint():
-#     unload_model()
-#     return jsonify({'message': 'Model unloaded successfully'}), 200
 
 
 if __name__ == '__main__':

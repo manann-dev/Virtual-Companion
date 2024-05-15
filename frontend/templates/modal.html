@@ -1,0 +1,21 @@
+<!-- The Modal -->
+<!-- id="overlay" style="display:none;position:fixed;top:0;left:0;height:100vh;width:100vw;background:rgba(0,0,0,0.98);z-index:999;" -->
+<!-- style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);padding:20px;width:80%;max-width:500px;z-index:1000;" -->
+<div class="guide-popup-container" id="overlay">
+    <div class="age-popup info-popup" id="myModal">
+        <div class="popup-container">
+            <p>This website is intended for mature audiences as it contains AI-generated images with adult content.</p>
+            <h5>You must be over 18 years old to enter this website</h5>
+            <p>By entering this site, you are certifying that you are of legal adult age. By using the site, you agree to our Terms of Service.</p>
+            <div class="modal-buttons age-buttons">
+            <button class="age-button-yes primary-btn-type" id="yesButton">Yes</button>
+            <button class="age-button-no primary-btn-type" id="noButton">No</button>
+
+            </div>
+            <p class="age-p">Any resemblance of the generated content on this website to real individuals is purely coincidental.
+                We use cookies for basic analytics and spam detection</p>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
