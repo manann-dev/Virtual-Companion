@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+    <meta
+      name="gallery description"
+      content="A 18+ free AI Hentai Generated Gallery, Check out the galleries free AI generated hentai!"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="https://i.postimg.cc/fTYbH36n/brand-logo.png"
+    />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <script>
+      (function (w, r) {
+        w._rwq = r;
+        w[r] =
+          w[r] ||
+          function () {
+            (w[r].q = w[r].q || []).push(arguments);
+          };
+      })(window, "rewardful");
+    </script>
+    <script
+      async
+      src="https://r.wdfl.co/rw.js"
+      data-rewardful="52d969"
+    ></script>
+    <script
+      src="https://www.dwin1.com/65546.js"
+      type="text/javascript"
+      defer="defer"
+    ></script>
+  </head>
+
+  <body>
+    <button class="menu-button" id="toggle-sidebar">☰</button>
+    <div class="header-new">
+      <div class="header-new__logo">
+        <a href="/">
+          <img
+            width="90"
+            src="https://i.postimg.cc/fTYbH36n/brand-logo.png"
+            alt=""
+          />
+        </a>
+      </div>
+
+      <div class="header-new__links">
+        <ul>
+          <li>
+            <a href="/">Create</a>
+          </li>
+          <li>
+            <a href="/edit">Edit</a>
+          </li>
+          <li>
+            <a href="/gallery">Gallery</a>
+          </li>
+          <li>
+            <a href="/image-explore">Explore</a>
+          </li>
+          <li>
+            <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+          </li>
+          <li>
+            <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+          </li>
+          <li>
+            <a href="/subscription">Subscription</a>
+          </li>
+          <li>
+            <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="header-new__actions">
+        <a href="https://www.aihentaigenerator.net/login">
+          <button class="header-button">Sign In</button>
+        </a>
+        <a href="https://www.aihentaigenerator.net/create-account">
+          <button class="header-button2">Register</button>
+        </a>
+      </div>
+    </div>
+
+    <!-- <div class="header">
+            <button class="menu-button" id="toggle-sidebar">☰</button>
+
+        <div class="auth-buttons">
+        <a href="https://www.aihentaigenerator.net/login">
+            <button class="header-button">Sign In</button>
+        </a>
+        <a href="https://www.aihentaigenerator.net/create-account">
+            <button class="header-button2">Register</button>
+        </a>
+
+        </div>
+
+    </div> -->
+
+    <div class="sidebar" id="sidebar">
+      <div class="menu-items">
+        <a href="https://www.aihentaigenerator.net/">Home</a>
+        <a href="https://shop.aihentaigenerator.net/">Shop</a>
+        <a href="https://info.aihentaigenerator.net/faq/">FAQ</a>
+        <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+        <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+        <a href="https://info.aihentaigenerator.net/subscription">Subscription</a>
+        <a href="https://www.aihentaigenerator.net/gallery">Gallery</a>
+        <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="chat">
+        <div class="chat__list">
+          <div class="chat__list-header">
+            <div>
+              <b>Chats</b>
+              <a
+                ><img
+                  src="https://i.postimg.cc/767MdvqX/settings-icon.png"
+                  alt=""
+              /></a>
+            </div>
+          </div>
+          <div class="chat__search">
+            <input type="text" placeholder="Search" />
+            <img src="https://i.postimg.cc/FK0Vn5rp/search-icon.png" alt="" />
+          </div>
+          <div class="chat__list-scroll">
+            <div class="chat__person-box">
+              <a onclick="showChatConversationSection()">
+                <div class="flex justify-between align-start">
+                  <div class="flex justify-start align-center">
+                    <div>
+                      <img
+                        src="https://i.postimg.cc/HWXCW20R/chat-sidebar-image.png"
+                        alt=""
+                      />
+                    </div>
+                    <div><b>Jason Doe</b></div>
+                  </div>
+                  <div>
+                    <span>00:12</span>
+                  </div>
+                </div>
+                <div class="m-1">
+                  <small>Are you there?</small>
+                </div>
+              </a>
+            </div>
+            <div class="chat__person-box active">
+              <a onclick="showChatConversationSection()">
+                <div class="flex justify-between align-start">
+                  <div class="flex justify-start align-center">
+                    <div>
+                      <img
+                        src="https://i.postimg.cc/HWXCW20R/chat-sidebar-image.png"
+                        alt=""
+                      />
+                    </div>
+                    <div><b>Jason Doe</b></div>
+                  </div>
+                  <div>
+                    <span>00:12</span>
+                  </div>
+                </div>
+                <div class="m-1">
+                  <small>Are you there?</small>
+                </div>
+              </a>
+            </div>
+            <div class="chat__person-box">
+              <a onclick="showChatConversationSection()">
+                <div class="flex justify-between align-start">
+                  <div class="flex justify-start align-center">
+                    <div>
+                      <img
+                        src="https://i.postimg.cc/HWXCW20R/chat-sidebar-image.png"
+                        alt=""
+                      />
+                    </div>
+                    <div><b>Jason Doe</b></div>
+                  </div>
+                  <div>
+                    <span>00:12</span>
+                  </div>
+                </div>
+                <div class="m-1">
+                  <small>Are you there?</small>
+                </div>
+              </a>
+            </div>
+            <div class="chat__person-box">
+              <a onclick="showChatConversationSection()">
+                <div class="flex justify-between align-start">
+                  <div class="flex justify-start align-center">
+                    <div>
+                      <img
+                        src="https://i.postimg.cc/HWXCW20R/chat-sidebar-image.png"
+                        alt=""
+                      />
+                    </div>
+                    <div><b>Jason Doe</b></div>
+                  </div>
+                  <div>
+                    <span>00:12</span>
+                  </div>
+                </div>
+                <div class="m-1">
+                  <small>Are you there?</small>
+                </div>
+              </a>
+            </div>
+            <div class="chat__person-box">
+              <a onclick="showChatConversationSection()">
+                <div class="flex justify-between align-start">
+                  <div class="flex justify-start align-center">
+                    <div>
+                      <img
+                        src="https://i.postimg.cc/HWXCW20R/chat-sidebar-image.png"
+                        alt=""
+                      />
+                    </div>
+                    <div><b>Jason Doe</b></div>
+                  </div>
+                  <div>
+                    <span>00:12</span>
+                  </div>
+                </div>
+                <div class="m-1">
+                  <small>Are you there?</small>
+                </div>
+              </a>
+            </div>
+            <div class="chat__person-box">
+              <a onclick="showChatConversationSection()">
+                <div class="flex justify-between align-start">
+                  <div class="flex justify-start align-center">
+                    <div>
+                      <img
+                        src="https://i.postimg.cc/HWXCW20R/chat-sidebar-image.png"
+                        alt=""
+                      />
+                    </div>
+                    <div><b>Jason Doe</b></div>
+                  </div>
+                  <div>
+                    <span>00:12</span>
+                  </div>
+                </div>
+                <div class="m-1">
+                  <small>Are you there?</small>
+                </div>
+              </a>
+            </div>
+            <div class="chat__person-box">
+              <a onclick="showChatConversationSection()">
+                <div class="flex justify-between align-start">
+                  <div class="flex justify-start align-center">
+                    <div>
+                      <img
+                        src="https://i.postimg.cc/HWXCW20R/chat-sidebar-image.png"
+                        alt=""
+                      />
+                    </div>
+                    <div><b>Jason Doe</b></div>
+                  </div>
+                  <div>
+                    <span>00:12</span>
+                  </div>
+                </div>
+                <div class="m-1">
+                  <small>Are you there?</small>
+                </div>
+              </a>
+            </div>
+            <div class="chat__person-box">
+              <a onclick="showChatConversationSection()">
+                <div class="flex justify-between align-start">
+                  <div class="flex justify-start align-center">
+                    <div>
+                      <img
+                        src="https://i.postimg.cc/HWXCW20R/chat-sidebar-image.png"
+                        alt=""
+                      />
+                    </div>
+                    <div><b>Jason Doe</b></div>
+                  </div>
+                  <div>
+                    <span>00:12</span>
+                  </div>
+                </div>
+                <div class="m-1">
+                  <small>Are you there?</small>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="expanded-chat" id="chatUI">
+          <div class="chat__conversation-header">
+            <div class="flex justify-between align-start">
+              <div class="flex justify-start align-center">
+                <div class="back-icon">
+                  <a onclick="showChatListSection()">
+                    <img
+                      src="https://i.postimg.cc/tgVDFnns/back-icon.png"
+                      alt=""
+                    />
+                  </a>
+                </div>
+                <div>
+                  <img
+                    src="https://i.postimg.cc/HWXCW20R/chat-sidebar-image.png"
+                    alt=""
+                  />
+                </div>
+                <div>
+                  <b>Jason Doe</b>
+                  <small>5 min ago</small>
+                </div>
+              </div>
+              <div class="conversation-icon">
+                <a
+                  ><img
+                    src="https://i.postimg.cc/7LM9B8X4/call-icon.png"
+                    alt=""
+                /></a>
+                <a onclick="showHideProfileSection()"
+                  ><img
+                    src="https://i.postimg.cc/Kcs67BRN/profile-open-icon.png"
+                    alt=""
+                /></a>
+              </div>
+            </div>
+          </div>
+          <div class="chat__conversation-box">
+            <div class="receiver-msg-box">
+              <small>OK bye, see ya later!</small
+              ><a
+                ><img
+                  src="https://i.postimg.cc/XNQCs7bx/speaker-icon.png"
+                  alt=""
+              /></a>
+              <div class="text-right">
+                <span>13:21</span>
+              </div>
+            </div>
+            <div class="flex justify-center align-center day">
+              <div class="border-line"></div>
+              <span>Today</span>
+              <div class="border-line"></div>
+            </div>
+            <div class="receiver-msg-box">
+              <small>Hello, I want to ask you for something.</small
+              ><a
+                ><img
+                  src="https://i.postimg.cc/XNQCs7bx/speaker-icon.png"
+                  alt=""
+              /></a>
+              <div class="text-right">
+                <span>13:21</span>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <div class="deliver-msg-box">
+                <small>Hello, I want to ask you for something.</small>
+                <div class="text-right">
+                  <img
+                    src="https://i.postimg.cc/3wvqZc0C/read-all-icon.png"
+                    alt=""
+                  /><span>13:21</span>
+                </div>
+              </div>
+            </div>
+            <div class="receiver-msg-box">
+              <small
+                >Can you provide me some good prompts for abstract image
+                generation?</small
+              ><a
+                ><img
+                  src="https://i.postimg.cc/XNQCs7bx/speaker-icon.png"
+                  alt=""
+              /></a>
+              <div class="text-right">
+                <span>13:21</span>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <div class="deliver-msg-box">
+                <small>Sure, I can</small>
+                <div class="text-right">
+                  <img
+                    src="https://i.postimg.cc/3wvqZc0C/read-all-icon.png"
+                    alt=""
+                  /><span>13:21</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <div class="deliver-msg-box">
+                <small
+                  >1 is Geometric modern abstract, 2 is colorful abstract, 3 is
+                  B/W abstract & 4 is asymmetric abstract.</small
+                >
+                <div class="text-right">
+                  <img
+                    src="https://i.postimg.cc/3wvqZc0C/read-all-icon.png"
+                    alt=""
+                  /><span>13:21</span>
+                </div>
+              </div>
+            </div>
+            <div class="receiver-msg-box">
+              <small>Ohh Great thanks. This is exactly what i wanted.</small
+              ><a
+                ><img
+                  src="https://i.postimg.cc/3wvqZc0C/read-all-icon.png"
+                  alt=""
+              /></a>
+              <div class="text-right">
+                <span>13:21</span>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <div class="deliver-msg-box">
+                <small>Anytime buddy.</small>
+                <div class="text-right">
+                  <img
+                    src="https://i.postimg.cc/3wvqZc0C/read-all-icon.png"
+                    alt=""
+                  /><span>13:21</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <div class="deliver-msg-box">
+                <small>Anytime buddy.</small>
+                <div class="text-right">
+                  <img
+                    src="https://i.postimg.cc/3wvqZc0C/read-all-icon.png"
+                    alt=""
+                  /><span>13:21</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <div class="deliver-msg-box">
+                <small>Anytime buddy.</small>
+                <div class="text-right">
+                  <img
+                    src="https://i.postimg.cc/3wvqZc0C/read-all-icon.png"
+                    alt=""
+                  /><span>13:21</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="chat__conversation-footer">
+            <div class="flex justify-between align-center">
+              <div class="width-1">
+                <select name="" id="">
+                  <option value="">Ask</option>
+                  <option value="">Show me..</option>
+                  <option value="">Send me..</option>
+                  <option value="">Send..</option>
+                  <option value="">Can I See..</option>
+                </select>
+                <input type="text" placeholder="Type a message" />
+              </div>
+              <div class="width-2">
+                <button type="button">
+                  <img
+                    src="https://i.postimg.cc/cCC493yS/send-icon.png"
+                    alt=""
+                  /><span>Send</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="no-profile" id="profileUI">
+          <div class="chat__list-header">
+            <div>
+              <b>Profile Information</b>
+              <a onclick="hideProfileSection()"
+                ><img src="https://i.postimg.cc/5NFFbhTM/close-icon.png" alt=""
+              /></a>
+            </div>
+          </div>
+          <div class="personal-info">
+            <div class="flex justify-center align-center flex-column">
+              <div class="profile-image">
+                <img
+                  src="https://i.postimg.cc/wM9Dn2cZ/profile-image.png"
+                  alt=""
+                  class="slide"
+                />
+                <img
+                  src="https://i.postimg.cc/wM9Dn2cZ/profile-image.png"
+                  alt=""
+                  class="slide"
+                />
+                <img
+                  src="https://i.postimg.cc/wM9Dn2cZ/profile-image.png"
+                  alt=""
+                  class="slide"
+                />
+                <a class="left-arrow" onclick="goPrev()"
+                  ><img
+                    src="https://i.postimg.cc/wMYcp923/chevron-left-profile.png"
+                    alt=""
+                /></a>
+                <a class="right-arrow" onclick="goNext()"
+                  ><img
+                    src="https://i.postimg.cc/0Qs0g8cj/chevron-right-profile.png"
+                    alt=""
+                /></a>
+              </div>
+              <div class="m-1"><b>Sam Turner</b></div>
+              <div>
+                <small
+                  >Active Yoga and fitness coach, healthy and concerned about
+                  others.</small
+                >
+              </div>
+              <div class="flex">
+                <a
+                  ><img
+                    src="https://i.postimg.cc/JzNprrzf/call-profile-icon.png"
+                    alt=""
+                /></a>
+                <a
+                  ><img
+                    src="https://i.postimg.cc/zBrbJN3c/generate-icon.png"
+                    alt=""
+                /></a>
+              </div>
+            </div>
+            <div class="flex justify-center align-center attributes">
+              <div class="border-line"></div>
+              <span>Personality Attributes</span>
+              <div class="border-line"></div>
+            </div>
+            <div class="flex justify-start align-center attributes">
+              <div class="gray-round">
+                <img
+                  src="https://i.postimg.cc/pTmWb1J6/personality-icon.png"
+                  alt=""
+                />
+              </div>
+              <div><small>Personality</small><b>Energetic & Joyful</b></div>
+            </div>
+            <div class="flex justify-start align-center attributes">
+              <div class="gray-round">
+                <img
+                  src="https://i.postimg.cc/tRV6FrGk/occupation-icon.png"
+                  alt=""
+                />
+              </div>
+              <div><small>Occupation</small><b>Yoga & Fitness Coach</b></div>
+            </div>
+            <div class="flex justify-start align-center attributes">
+              <div class="gray-round">
+                <img
+                  src="https://i.postimg.cc/tC4HLcRt/hobby-icon.png"
+                  alt=""
+                />
+              </div>
+              <div><small>Hobbies</small><b>Yoga, Fitness, Nature</b></div>
+            </div>
+            <div class="flex justify-start align-center attributes">
+              <div class="gray-round">
+                <img
+                  src="https://i.postimg.cc/YCxDMrXv/relationship-icon.png"
+                  alt=""
+                />
+              </div>
+              <div><small>Relationship</small><b>Married</b></div>
+            </div>
+            <div class="flex justify-center align-center attributes">
+              <div class="border-line"></div>
+              <span>Physical Attributes</span>
+              <div class="border-line"></div>
+            </div>
+            <div class="flex justify-start align-center attributes">
+              <div class="gray-round">
+                <img src="https://i.postimg.cc/RC2vHBcs/body-icon.png" alt="" />
+              </div>
+              <div><small>Body</small><b>Athletic</b></div>
+            </div>
+            <div class="flex justify-start align-center attributes">
+              <div class="gray-round">
+                <img src="https://i.postimg.cc/qqrq2HKC/age-icon.png" alt="" />
+              </div>
+              <div><small>Age</small><b>51 years</b></div>
+            </div>
+            <div class="flex justify-start align-center attributes">
+              <div class="gray-round">
+                <img
+                  src="https://i.postimg.cc/nM8k4zkG/ethinicity-icon.png"
+                  alt=""
+                />
+              </div>
+              <div><small>Ethnicity</small><b>American</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include 'modal.html' %}
+  </body>
+  <script>
+    window.trackingId = "{{ tracking_id }}";
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-HGLWRKMWZE"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-HGLWRKMWZE");
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-JY64H3024L"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-JY64H3024L");
+  </script>
+  <script type="text/javascript">
+    // js for slider
+      const slides = document.querySelectorAll(".slide");
+      var counter = 0;
+
+      slides.forEach((slide, index) => {
+        slide.style.left = `${index * 100}%`;
+      });
+
+      const goPrev = () => {
+        counter--;
+        slideImage();
+      };
+      const goNext = () => {
+        if (counter < slides.length - 1) {
+          counter++;
+          slideImage();
+        }
+      };
+
+      const slideImage = () => {
+        slides.forEach((slide) => {
+          slide.style.transform = `translateX(-${counter * 100}%)`;
+        });
+      };
+
+      // js functions on icon click
+      function showHideProfileSection() {
+        console.log(
+          document.getElementById("chatUI").classList.contains("chat__conversation")
+        );
+        if (
+          document.getElementById("chatUI").classList.contains("chat__conversation")
+        ) {
+          hideProfileSection();
+        } else {
+          showProfileSection();
+        }
+      }
+
+      function showProfileSection() {
+        document.getElementById("chatUI").classList.add("chat__conversation");
+        document.getElementById("profileUI").classList.add("chat__information");
+        document.getElementById("profileUI").classList.add("personal-info-mob");
+        document.getElementById("profileUI").classList.add("personal-info-tab");
+        document.getElementById("profileUI").classList.remove("no-profile");
+        document.getElementById("chatUI").classList.remove("expanded-chat");
+      }
+
+      function hideProfileSection() {
+        document.getElementById("chatUI").classList.remove("chat__conversation");
+        document.getElementById("profileUI").classList.remove("chat__information");
+        document.getElementById("profileUI").classList.remove("personal-info-mob");
+        document.getElementById("profileUI").classList.remove("personal-info-tab");
+        document.getElementById("profileUI").classList.add("no-profile");
+        document.getElementById("chatUI").classList.add("expanded-chat");
+      }
+
+      function showChatConversationSection() {
+        document.getElementById("chatUI").classList.add("chat-mob");
+      }
+
+      function showChatListSection() {
+        document.getElementById("chatUI").classList.remove("chat-mob");
+      }
+
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</html>

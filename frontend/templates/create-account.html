@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/fTYbH36n/brand-logo.png">
+    <title>Create an Account</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+      (function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');
+    </script>
+    <script async src='https://r.wdfl.co/rw.js' data-rewardful='52d969'></script>
+
+</head>
+<body>
+
+    <button class="menu-button" id="toggle-sidebar">☰</button>
+<div class="header-new">
+    <div class="header-new__logo">
+        <a href="/">
+            <img width="90" src="https://i.postimg.cc/fTYbH36n/brand-logo.png" alt="" />
+        </a>
+    </div>
+
+    <div class="header-new__links">
+        <ul>
+            <li>
+                <a href="/">Create</a>
+              </li>
+              <li>
+                <a href="/edit">Edit</a>
+              </li>
+              <li>
+                <a href="/gallery">Gallery</a>
+              </li>
+              <li>
+                <a href="/image-explore">Explore</a>
+                </li>
+              <li>
+                <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+              </li>
+              <li>
+                <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+              </li>
+              <li>
+                <a href="/subscription">Subscription</a>
+                </li>
+              <li>
+                <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+              </li>
+        </ul>
+    </div>
+
+    <div class="header-new__actions">
+        <a href="https://www.aihentaigenerator.net/login">
+        <button class="header-button">Sign In</button>
+        </a>
+        <a href="https://www.aihentaigenerator.net/create-account">
+        <button class="header-button2">Register</button>
+        </a>
+    </div>
+    </div>
+
+
+<!-- <div class="header">
+            <button class="menu-button" id="toggle-sidebar">☰</button>
+
+        <div class="auth-buttons">
+        <a href="https://www.aihentaigenerator.net/login">
+            <button class="header-button">Sign In</button>
+        </a>
+        <a href="https://www.aihentaigenerator.net/create-account">
+            <button class="header-button2">Register</button>
+        </a>
+
+        </div>
+
+    </div> -->
+
+
+ <div class="sidebar" id="sidebar">
+        <div class="menu-items">
+            <a href="https://www.aihentaigenerator.net/">Home</a>
+            <a href="https://shop.aihentaigenerator.net/">Shop</a>
+            <a href="https://info.aihentaigenerator.net/faq/">FAQ</a>
+            <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+            <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+            <a href="https://info.aihentaigenerator.net/subscription">Subscription</a>
+            <a href="https://www.aihentaigenerator.net/gallery">Gallery</a>
+            <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+
+        </div>
+    </div>
+
+
+
+<div class="login-container">
+    <div class="announcement-bar announcement-bar-fixed">
+        <b>50% off premium subscription</b>
+    </div>
+    
+    <h2>Create an Account</h2>
+    <p>Register your account with us</p>
+
+    <form id="createAccountForm" class="create-account-form" action="/create-account" method="post">
+        <div class="input-group">
+            <label for="nickname">Nickname</label>
+            <input type="text" placeholder="Enter your nickname" id="nickname" name="nickname" required>
+        </div>
+        <div class="input-group">
+            <label for="signupEmail">Email</label>
+            <input type="email" placeholder="Enter your email" id="signupEmail" name="email" required>
+        </div>
+        <div class="input-group">
+            <label for="signupPassword">Password</label>
+            <input type="password" placeholder="Enter your password" id="signupPassword" name="password" required>
+        </div>
+        <div class="input-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" placeholder="Enter your confirm password" id="confirmPassword" name="confirm_password" required>
+        </div>
+        <div>
+            <label class="terms-checkbox">
+                <input type="checkbox" class="custom-checkbox" id="confirm-terms-create" name="confirm-terms"> I agree to the terms
+                </label>
+        </div>
+        <div class="input-group-login">
+            <button type="submit">Create Account</button>
+        </div>
+        <div class="link-group">
+            Already have an account? <a href="login">Login</a>
+        </div>
+    </form>
+
+    <div class=" login-flash">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+            </div>
+        <div class="terms-check">
+        <p>By proceeding, you confirm that you are at least 18 years of age. By using this website, you agree to our <a href="https://info.aihentaigenerator.net/terms-of-service/">Terms of Service</a> and <a href="https://info.aihentaigenerator.net/privacy-policy/">Privacy Policy</a></p>
+        </div>
+    </div>
+
+
+
+
+<footer>
+  <p>&copy; 2024 AI Hentai Generator. All rights reserved. | <a href="https://info.aihentaigenerator.net/privacy-policy/">Privacy Policy</a> | <a href="https://info.aihentaigenerator.net/child-protection/">Child Protection</a> | <a href="https://info.aihentaigenerator.net/terms-of-service/">Terms of Service</a></p>
+</footer>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JY64H3024L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JY64H3024L');
+</script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+
+
+
+</html>

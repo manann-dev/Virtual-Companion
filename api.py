@@ -11,7 +11,8 @@ from chat import (
     save_character, 
     upload_tavern_character,
     delete_character,
-    generate_chat_reply
+    generate_chat_reply,
+    update_character_state
 )
 from loaders import make_loader_params_visible, loaders_samplers, transformers_samplers
 from models import load_model, unload_model, load_tokenizer, get_tokenizer
@@ -30,7 +31,6 @@ from text_generation import (
 from presets import default_preset, load_preset
 from jinja2 import Environment, FileSystemLoader
 import traceback
-# from chat import character_is_loaded, chatbot_wrapper, generate_chat_reply_wrapper, replace_character_names, get_encoded_length, get_max_prompt_length
 from extensions import apply_extensions
 import jinja2
 from transformers import AutoTokenizer,AutoModelForCausalLM
@@ -97,84 +97,62 @@ state = {
 
 
 app.secret_key = 'manan' 
-
-
-
-# async def handle_websocket(websocket, path):
-#     async for message in websocket:
-#         try:
-#             data = json.loads(message)
-#             print(f"data = {data}")
-#             question = data['question']
-#             print(f"question = {question}")
-#             state = data['state']
-#             state['ban_eos_token'] = False
-#             state['custom_token_bans'] = False 
-#             state['auto_max_new_tokens'] = False
-#             print(f"state = {state}")
-#             # required_keys = ['auto_max_new_tokens', 'sampler_priority', 'max_new_tokens', 'temperature', 'add_bos_token', 'truncation_length']
-#             # print(f"required_keys = {required_keys}")
-#             # if not all(key in state for key in required_keys):
-#             #     error_msg = 'Missing required state keys: {}'.format(', '.join(required_keys))
-#             #     await websocket.send(error_msg)
-#             #     return
-
-#             grammar_file_name = 'roleplay'
-#             grammar = initialize_grammar(grammar_file_name)
-#             if grammar is None:
-#                 error_msg = 'Invalid grammar file'
-#                 await websocket.send(error_msg)
-#                 return
-
-#             response = None
-#             response_generator = generate_reply_HF(question, question, None, state)
-#             print(f"response_generator = {response_generator}")
-#             for output in response_generator:
-#                 print(f"output chunk: {output}")
-#                 response1 = {
-#                     'results': [
-#                         {
-#                             'history': {
-#                                 'internal': [],
-#                                 'visible': [question, output]
-#                             }
-#                         }
-#                     ]
-#                 }
-#                 print(f"response1 = {response1}")
-#                 await websocket.send(json.dumps(response1))
-#         except Exception as e:
-#             error_msg = str(e)
-#             await websocket.send(error_msg)
-
+conversation_histories = {}
 
 
 async def handle_websocket(websocket, path):
     async for message in websocket:
         try:
             data = json.loads(message)
+            print(f"data = {data}")
             question = data['question']
-            character_name = data['character_name']
-            name1 = data['name1']
-            name2 = data['name2']
+            print(f"question = {question}")
             state = data['state']
+            state['ban_eos_token'] = False
+            state['custom_token_bans'] = False
+            state['auto_max_new_tokens'] = False
+            print(f"state = {state}")
 
-            # Load the character information
-            character = load_character(character_name,name1,name2)
+            character = 'Sakura Tanaka'  
 
-            # Generate a response using the text generation WebSocket
-            response_generator = generate_reply(question, state, character)
+            client_id = websocket.remote_address
+            if client_id not in conversation_histories:
+                conversation_histories[client_id] = f"User: {question}\n{character}:"
+            else:
+                conversation_histories[client_id] += f"\nUser: {question}\n{character}:"
+
+            modified_question = conversation_histories[client_id]
+
+            response_generator = generate_reply_HF(question, question, None, state, character=character)
+            print(f"response_generator = {response_generator}")
+
             for output in response_generator:
-                response = {'results': [{'history': {'internal': [], 'visible': [question, output]}}]}
-                await websocket.send(json.dumps(response))
+                print(f"output chunk: {output}")
+
+                conversation_histories[client_id] += f" {output}"
+
+                response1 = {
+                    'results': [
+                        {
+                            'history': {
+                                'internal': [],
+                                'visible': [question, output]
+                            }
+                        }
+                    ]
+                }
+                print(f"response1 = {response1}")
+                await websocket.send(json.dumps(response1))
         except Exception as e:
             error_msg = str(e)
             await websocket.send(error_msg)
 
 
+
+
 async def start_websocket_server():
     async with websockets.serve(handle_websocket, "localhost", 8000):
-        await asyncio.Future()  # run forever
+        await asyncio.Future() 
 
 def run_websocket_server():
     asyncio.run(start_websocket_server())
@@ -184,23 +162,6 @@ def start_websocket():
     thread = threading.Thread(target=run_websocket_server)
     thread.start()
     return 'WebSocket server started'
-
-
-def get_default_state():
-    return {
-        'mode': 'chat',
-        'chat_template_str': "Hello, {{ name1 }}. How can I assist you today?",
-        'instruction_template_str': "Please follow these instructions: {{ instructions }}",
-        'name1': 'User',
-        'name2': 'Assistant',
-        'user_bio': '',
-        'context': '',
-        'custom_system_message': '',
-        'history': [],
-        'chat-instruct_command': '',
-        'truncation_length': 512,
-        'max_new_tokens': 150
-    }
 
 
 if __name__ == '__main__':

@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="ailogo1.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/fTYbH36n/brand-logo.png">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="/static/script.js" defer></script>
+    <meta name="google-site-verification" content="WX6GZGH8xWmy0lWn2zY9Ulba8xLBKg3E81AnPyRClCk" />
+    <script>
+        (function(w, r) {
+            w._rwq = r;
+            w[r] = w[r] || function() {
+                (w[r].q = w[r].q || []).push(arguments)
+            }
+        })(window, 'rewardful');
+    </script>
+    <script async src='https://r.wdfl.co/rw.js' data-rewardful='52d969'></script>
+    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuid.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.3/socket.io.min.js" integrity="sha384-+miq58Ltmjm+SSP5g8Ok6dpMO/6R4n8xe/x1Yj0Bdb9kiEz25LTnWv/GZQTRQamg" crossorigin="anonymous"></script>    <title>AI Hentai Generator</title>
+    <meta name="description" content="A easy to use AI Hentai Generator, made to generate all your AI hentai!">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+
+<body>
+    <!-- <div class="header">
+         <button class="menu-button" id="toggle-sidebar">☰</button>
+
+         <div class="auth-buttons">
+         <a href="https://www.aihentaigenerator.net/login">
+         <button class="header-button">Sign In</button>
+         </a>
+         <a href="https://www.aihentaigenerator.net/create-account">
+         <button class="header-button2">Register</button>
+         </a>
+
+         </div>
+
+         </div> -->
+    <button class="menu-button" id="toggle-sidebar">☰</button>
+    <div class="header-new">
+        <div class="header-new__logo">
+            <a href="/">
+                <img width="90" src="https://i.postimg.cc/fTYbH36n/brand-logo.png" alt="" />
+            </a>
+        </div>
+        <div class="header-new__links">
+            <ul>
+                <li>
+                    <a href="/">Create</a>
+                </li>
+                <li>
+                    <a href="/edit">Edit</a>
+                </li>
+                <li>
+                    <a href="/gallery">Gallery</a>
+                </li>
+                <li>
+                    <a href="/image-explore">Explore</a>
+                </li>
+                <li>
+                    <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+                </li>
+                <li>
+                    <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+                </li>
+                <li>
+                    <a href="/subscription">Subscription</a>
+                </li>
+                <li>
+                    <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+        <div class="header-new__actions">
+            <a href="https://www.aihentaigenerator.net/login">
+                <button class="header-button">Sign In</button>
+            </a>
+            <a href="https://www.aihentaigenerator.net/create-account">
+                <button class="header-button2">Register</button>
+            </a>
+        </div>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <div class="menu-items">
+            <a href="https://www.aihentaigenerator.net/">Home</a>
+            <a href="https://shop.aihentaigenerator.net/">Shop</a>
+            <a href="https://info.aihentaigenerator.net/faq/">FAQ</a>
+            <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+            <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+            <a href="https://info.aihentaigenerator.net/subscription">Subscription</a>
+            <a href="https://www.aihentaigenerator.net/gallery">Gallery</a>
+            <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="announcement-bar announcement-bar-fixed">
+        <b>50% off premium subscription</b>
+    </div>
+
+    <div class="container">
+        <div id="faq-popup-container" class="info-popup-container" style="display:none;">
+            <!-- Popup content -->
+            <div id="faq-popup" class="info-popup" style="overflow-y: scroll;">
+                <button class="close-info-popup" id="close-faq-popup">
+                <span class="material-symbols-outlined">add</span>
+               </button>
+                <div class="popup-container">
+                    <h2>How does the AI hentai image generator work?</h2>
+                    <p>Our AI Hentai generator utilizes cutting-edge machine learning technology to transform textual descriptions into vivid images. It's built on complex algorithms that analyze vast libraries of existing artwork, learning patterns, styles,
+                        and techniques. This allows the generator to interpret and visualize your descriptions with remarkable accuracy, whether you're looking for realistic scenes or fantastical creations. Our system is continuously learning, ensuring
+                        each generated image is a unique piece of art.
+                    </p>
+                    <h2>What is the best AI generator for anime girls?</h2>
+                    <p>In our AI Hentai generator is designed specifically for anime-style / hentai artwork. Our AI hentai generator is fine-tuned to capture the essence of anime aesthetics, particularly focusing on female characters. It stands out for its
+                        ability to accurately render the distinct features associated with adult anime girls, like expressive eyes, detailed hairstyles, and dynamic poses. The AI Hentai Generator offers a blend of creativity and precision, making it a
+                        favorite among anime enthusiasts and illustrators.</p>
+                    <h2>What is the AI Hentai art generator everyone is using?</h2>
+                    <p>Our widely acclaimed AI Hentai art generator has gained popularity for its exceptional ability to create diverse and expressive anime artworks. It's been celebrated for its user-friendly interface and the depth of customization it
+                        offers, allowing both novices and experienced artists to bring their visions to life. Our AI hentai generator is particularly noted for its versatility in styles, capable of creating everything from classic anime to contemporary
+                        interpretations. It’s the go-to choice for those looking to create unique anime / hentai art with an AI touch.
+                    </p>
+                    <h2>Is AI Hentai image generator legal?</h2>
+                    <p>The use of all AI image generators, including ours, is legal. We adhere to all copyright and intellectual property laws, ensuring that our AI-generated images are created ethically and responsibly. Users should be aware, however, that
+                        while the images generated are original creations, they should respect the rights of others when using these images, particularly if they are for commercial purposes. Our platform provides guidelines and support to help users navigate
+                        these legal considerations effectively.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Hidden popup container -->
+        <div id="info-popup-container" class="info-popup-container" style="display:none;">
+            <!-- Popup content -->
+            <div id="info-popup" class="info-popup" style="overflow-y: scroll;">
+                <button class="close-info-popup" id="close-info-popup">
+                <span class="material-symbols-outlined">add</span>
+               </button>
+                <div class="popup-container">
+                    <h1>AI Hentai Generator</h1>
+                    <h2> Enjoy our AI hentai generator and create Beautiful AI-Generated Hentai pics in for free. Experience an entire new way to create Hentai with our AI generator</h2>
+                    <p>Unleash your wildest AI Hentai fantasies and explore the depths of your imagination with our state-of-the-art AI Hentai Generator. Our easy-to-use platform empowers users to effortlessly create personalized and high-quality adult AI
+                        Hentai artwork</p>
+                    <h2>What does a AI Hentai Generator do?</h2>
+                    <p>Our AI Hentai Generator is a marvel of modern technology that stands as a digital artist's dream come true. It's a sophisticated tool designed to emulate the distinctive style of AI Hentai art through the lens of artificial intelligence.
+                        By harnessing the capabilities of machine learning, our AI Hentai generator can analyze and replicate the intricacies of Hentai designs—from the oversized, expressive eyes to the gravity-defying hairstyles and dynamic poses that
+                        are hallmarks of the genre. Users can input a set of parameters or descriptive prompts, and the AI utilizes its vast database of anime imagery to create unique, custom artwork. The process transcends mere imitation, allowing for
+                        the generation of novel characters and scenes that capture the essence of anime's vibrant aesthetic, making it a potent asset for creators looking to produce high-quality AI Hentai art efficiently and at scale.
+                    </p>
+                    <h3> Why our AI Hentai is the best?</h3>
+                    <p>Setting the benchmark for excellence, our AI Hentai Generator is a powerhouse, leveraging the sophisticated AI for unmatched quality and diversity in anime art generation. With a foundation built on an extensive and richly varied dataset,
+                        our AI Hentai Generator intricately understands the nuances of anime styles, from classic to cutting-edge, ensuring that every creation is authentic and vibrant. What truly sets our generator apart is its perfect blend of high-grade
+                        customization, user-centric interface, and algorithmic precision, which collectively deliver a user experience that is as enjoyable as it is efficient. Whether you're a die-hard anime fan or a professional artist, our generator
+                        is engineered to fulfill your creative needs, pushing the boundaries of digital art and setting a new standard for what AI can achieve in the AI Hentai genre.
+                    </p>
+                    <h3> How do you use the AI generator to create AI Hentai?</h3>
+                    <p>Creating AI Hentai artwork with our tool is a breeze, thanks to an interface designed with the user in mind. Start by visiting our platform or setting up your profile to get started. With an array of adjustable parameters at your fingertips,
+                        you can dictate the exact traits of your AI Hentai or scene—choose hairstyles, eye colors, outfits, and more, or input a detailed description for more specific results. Once you hit the 'Generate' button, our AI gets to work, bringing
+                        your vision to life. If the result isn't quite what you envisioned, our platform allows for easy adjustments and re-generation until your AI Hentai creation meets your exact standards. It's a seamless cycle of creation and refinement
+                        that puts you in control of the artistic process.
+                    </p>
+                    <h3> How much does the AI Hentai Generator cost?</h3>
+                    <p>Accessibility and flexibility are at the heart of our pricing strategy. Our AI Hentai Generator operates on a freemium model, designed to cater to a wide range of users. Without spending a dime, you can access a selection of core features,
+                        For users requiring more advanced functionality, such as higher resolution images or bulk generation, we offer competitively priced subscription plans. These plans are tailored to accommodate the varying needs of our users, ensuring
+                        that whether you're a hobbyist or a professional, there's an option that aligns with your creative aspirations and budgetary considerations.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Guide Popup Container -->
+        <div id="guide-popup-container" class="guide-popup-container" style="display:none;">
+            <!-- Popup Content -->
+            <div id="guide-popup" class="info-popup" style="overflow-y: scroll;">
+                <button class="close-info-popup" id="close-guide-popup">
+                <span class="material-symbols-outlined">add</span>
+               </button>
+                <div class="popup-container">
+                    <h4>Prompt Guide</h4>
+                    <p>To get the best AI Hentai generations you should optimize the prompt buttons for your specific generation and then enter your text prompt with the chosen prompt buttons in mind for you do not include duplicate prompt inputs. </p>
+                    <p> The AI Hentai Generator receives the prompt buttons and your text input like this:</p>
+                    <p>{gender} {ethnicity}, {race}, ((age 20-30)), with {hairColor} hair, {face}, Hair Style: {hairStyle}, {eyesColor}, {outfit}, In {places}, With {accessories}, {height} ((adult)),
+                    </p>
+                    <p>{YOUR TEXT INPUT}</p>
+                    <p>((full body)), (((nsfw))), (((hdr, masterpiece, highest resolution, best quality, beautiful, raw image))), (((extremely detailed, rendered)))"
+                    </p>
+                    <p>As you can see the prompt buttons are added around your actual text input and some keywords to increase the quality of the AI Hentai generation are added after your text input. Keep this in-mind when creating your text input.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="grid-container">
+            <div class="text-section" id="text-section">
+                <div class="btn-container">
+                    <label class="switch btn-color-mode-switch">
+                      <!-- <span class="material-symbols-outlined img-icon">
+                        image
+                      </span>
+                      <span class="material-symbols-outlined movie-icon">
+                        movie
+                      </span> -->
+                        <input type="checkbox" name="color_mode" id="color_mode" value="1">
+                        <label for="color_mode" data-on="Video" data-off="Image" class="btn-color-mode-switch-inner">
+                        </label>
+                    </label>
+                </div>
+
+                <div id="imageTab">
+                    <div class="describe">
+                        <h4>Describe</h4>
+                        <a id="settingIconInActive" onclick="onShowSettingsOption()">
+                            <span class="material-symbols-outlined">
+                        settings
+                        </span>
+                        </a>
+                        <a id="settingIconActive" onclick="onHideSettingsOption()">
+                            <span class="material-symbols-outlined">
+                        settings
+                        </span>
+                        </a>
+                    </div>
+
+                    <div id="createPart" class="create-part">
+                        <div class="stylish-section">
+                            <span>Stylize your prompt</span>
+                            <!-- <a>Reset All</a> -->
+                        </div>
+
+                        <!-- <div class="button-bar">
+                        <button class="open-popup-button" id="open-info-popup">About</button>
+                        <button class="open-guide-popup-button" id="open-guide-popup">Guide</button>
+                    </div> -->
+
+                        <div class="category-section">
+                            <div class="category-section-header">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            man
+                          </span>
+                                    <b>Gender</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="gender category-section-body">
+                                <button type="button" value="Male">Male</button>
+                                <button type="button" value="Woman">Woman</button>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-section-header">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            candle
+                          </span>
+                                    <b>Ethnicity</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="ethnicity category-section-body">
+                                <button type="button" value="White">White</button>
+                                <button type="button" value="Black">Black</button>
+                                <button type="button" value="Arabic">Arabic</button>
+                                <button type="button" value="French">French</button>
+                                <button type="button" value="Egyptian">Egyptian</button>
+                                <button type="button" value="British">British</button>
+                                <button type="button" value="Chinese">Chinese</button>
+                                <button type="button" value="Brazilian">Brazilian</button>
+                                <button type="button" value="Japanese">Japanese</button>
+                                <button type="button" value="Greek">Greek</button>
+                                <button type="button" value="German">German</button>
+                                <button type="button" value="Latina">Latina</button>
+                                <button type="button" value="Indian">Indian</button>
+                                <button type="button" value="Irish">Irish</button>
+                                <button type="button" value="Middle Eastern">Middle Eastern</button>
+                                <button type="button" value="Mongolian">Mongolian</button>
+                                <button type="button" value="Korean">Korean</button>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-section-header">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            emoji_people
+                          </span>
+                                    <b>Race</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="race category-section-body">
+                                <button type="button" value="Human">Human</button>
+                                <button type="button" value="Elf">Elf</button>
+                                <button type="button" value="Fairy">Fairy</button>
+                                <button type="button" value="Satyr">Satyr</button>
+                                <button type="button" value="Demon">Demon</button>
+                                <button type="button" value="Angel">Angel</button>
+                                <button type="button" value="Mechanical">Mechanical</button>
+                                <button type="button" value="Elemental">Elemental</button>
+                                <button type="button" value="Undead">Undead</button>
+                                <button type="button" value="Dark Elf">Dark Elf</button>
+                                <button type="button" value="Furry">Furry</button>
+                                <button type="button" value="Reptilian">Reptilian</button>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-section-header">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            health_and_beauty
+                          </span>
+                                    <b>Hair Color</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="hairColor category-section-body">
+                                <button type="button" value="Black">Black</button>
+                                <button type="button" value="Blonde">Blonde</button>
+                                <button type="button" value="Red">Red</button>
+                                <button type="button" value="Blue">Blue</button>
+                                <button type="button" value="White">White</button>
+                                <button type="button" value="Brunette">Brunette</button>
+                                <button type="button" value="Purple">Purple</button>
+                                <button type="button" value="Pink">Pink</button>
+                                <button type="button" value="Green">Green</button>
+                                <button type="button" value="Ginger">Ginger</button>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-section-header inactive-body">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            face
+                          </span>
+                                    <b>Face</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="face category-section-body">
+                                <button type="button" value="Angry">Angry</button>
+                                <button type="button" value="Crying">Crying</button>
+                                <button type="button" value="Laughing">Laughing</button>
+                                <button type="button" value="Ahegao">Ahegao</button>
+                                <button type="button" value="Pouting Lips">Pouting Lips</button>
+                                <button type="button" value="Sad">Sad</button>
+                                <button type="button" value="Seductive">Seductive</button>
+                                <button type="button" value="Serious">Serious</button>
+                                <button type="button" value="Shocked">Shocked</button>
+                                <button type="button" value="Smiling">Smiling</button>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-section-header inactive-body">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            styler
+                          </span>
+                                    <b>Hair Style</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="hairStyle category-section-body">
+                                <button type="button" value="Curly">Curly</button>
+                                <button type="button" value="Bob Cut">Bob Cut</button>
+                                <button type="button" value="Straight">Straight</button>
+                                <button type="button" value="Pony Tail">Pony Tail</button>
+                                <button type="button" value="Bun style">Hair Bun</button>
+                                <button type="button" value="Bangs">Bangs</button>
+                                <button type="button" value="Messy">Messy</button>
+                                <button type="button" value="Pixie">Pixie</button>
+                                <button type="button" value="Slicked">Slicked</button>
+                                <button type="button" value="Braided">Braided</button>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-section-header inactive-body">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            symptoms
+                          </span>
+                                    <b>Eyes Color</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="eyesColor category-section-body">
+                                <button type="button" value="Blue Eyes">Blue</button>
+                                <button type="button" value="Red Eyes">Red</button>
+                                <button type="button" value="Black Eyes">Black</button>
+                                <button type="button" value="Green Eyes">Green</button>
+                            </div>
+                        </div>
+
+                        <!-- <div class="category-section">
+                      <div class="category-section-header inactive-body">
+                        <div>
+                          <span class="material-symbols-outlined">
+                            emoji_people
+                          </span>
+                          <b>Height</b>
+                        </div>
+                        <div>
+                          <a>
+                            <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                            <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                          </a>
+                        </div>
+                      </div>
+
+                      <div class="height category-section-body">
+                        <button type="button" value="Tall">Tall</button>
+                      </div>
+                    </div> -->
+
+                        <div class="category-section">
+                            <div class="category-section-header inactive-body">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            apparel
+                          </span>
+                                    <b>Outfit</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="outfit category-section-body">
+                                <button type="button" value="Nurse">Nurse</button>
+                                <button type="button" value="Flight Attendant">Flight Attendant</button>
+                                <button type="button" value="Bartender">Bartender</button>
+                                <button type="button" value="Dentist">Dentist</button>
+                                <button type="button" value="Housemaid">Housemaid</button>
+                                <button type="button" value="Journalist">Journalist</button>
+                                <button type="button" value="Lawyer">Lawyer</button>
+                                <button type="button" value="Life Guard">Life Guard</button>
+                                <button type="button" value="Writer">Writer</button>
+                                <button type="button" value="Waitress">Waitress</button>
+                                <button type="button" value="Police Officer">Police Officer</button>
+                                <button type="button" value="Masseuse">Masseuse</button>
+                                <button type="button" value="Photographer">Photographer</button>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-section-header inactive-body">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            home_work
+                          </span>
+                                    <b>Places</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="places category-section-body">
+                                <button type="button" value="Bedroom">Bedroom</button>
+                                <button type="button" value="Beach">Beach</button>
+                                <button type="button" value="Bathroom">Bathroom</button>
+                                <button type="button" value="Bus">Bus</button>
+                                <button type="button" value="Car">Car</button>
+                                <button type="button" value="City Street">City Street</button>
+                                <button type="button" value="Gaming Room">Gaming Room</button>
+                                <button type="button" value="Gym">Gym</button>
+                                <button type="button" value="Hospital">Hospital</button>
+                                <button type="button" value="Hotel">Hotel</button>
+                                <button type="button" value="Jail">Jail</button>
+                                <button type="button" value="Kitchen">Kitchen</button>
+                                <button type="button" value="Library">Library</button>
+                                <button type="button" value="Living Room">Living Room</button>
+                                <button type="button" value="Metro Station">Metro Station</button>
+                                <button type="button" value="Night Club">Night Club</button>
+                                <button type="button" value="Plane">Plane</button>
+                                <button type="button" value="Sauna">Sauna</button>
+                                <button type="button" value="Shower">Shower</button>
+                                <button type="button" value="Swimming Pool">Swimming Pool</button>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-section-header inactive-body">
+                                <div>
+                                    <span class="material-symbols-outlined">
+                            eyeglasses
+                          </span>
+                                    <b>Accessories</b>
+                                </div>
+                                <div>
+                                    <a>
+                                        <span class="material-symbols-outlined add-icon-tab">
+                              add
+                            </span>
+                                        <span class="material-symbols-outlined remove-icon-tab">
+                              remove
+                            </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="accessories category-section-body">
+                                <button type="button" value="No Accessories">No Accessories</button>
+                                <button type="button" value="Anklet">Anklet</button>
+                                <button type="button" value="Glasses">Glasses</button>
+                                <button type="button" value="Handcuffs">Handcuffs</button>
+                                <button type="button" value="High Heels">High Heels</button>
+                                <button type="button" value="Belly Chain">Belly Chain</button>
+                                <button type="button" value="Neck Choker">Neck Choker</button>
+                            </div>
+                        </div>
+
+                        <!-- <div class="padding-bottom-part"></div> -->
+
+                        <div class="sidebar-bottom-fix">
+                            <div class="generate-button-container">
+                                <form action="/" method="POST">
+                                    <!-- Removed the label and added the "Enter your fantasy" text inside the input field -->
+                                    <input type="text" id="text_input" name="text_input" placeholder="Type Prompt ">
+                                    <button id="generate_button" class="primary-btn-type" type="submit">Generate Image</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- <button class="open-faq-popup-button" id="open-faq-popup">??</button> -->
+                    </div>
+
+                    <div id="settingsPart" class="settings-part">
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              hallway
+                            </span>
+                                        <b>Private Gallery</b>
+                                    </div>
+                                    <div>
+
+                                    </div>
+                                </div>
+
+                                <div class="private_gallery category-section-body">
+                                    <button class="active" type="button" value="public">Public</button>
+                                    <button type="button"   value="private">
+                            Private
+                            <span class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button>
+                                    <p class="prem-text-para">To get more premium features, Please <a href="{{ url_for('login') }}">Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              humidity_low
+                            </span>
+                                        <b>Remove Watermark</b>
+                                    </div>
+                                    <div>
+                                        <a>
+
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="no_watermark category-section-body">
+                                    <button class="active" type="button" value="no">No</button>
+                                    <button type="button"   value="yes">
+                            Yes
+                            <span class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button>
+                                    <p class="prem-text-para">To get more premium features, Please <a href="{{ url_for('login') }}">Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              image
+                            </span>
+                                        <b>Image Size</b>
+                                    </div>
+                                    <div>
+                                        <a>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="image_size category-section-body">
+                                    <button class="active" type="button" value="square">Square</button>
+                                    <button type="button" value="portrait">Portrait</button>
+                                    <button type="button"   value="landscape">
+                            Landscape
+                            <span class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button>
+                                    <p class="prem-text-para">To get more premium features, Please <a href="{{ url_for('login') }}">Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              palette
+                            </span>
+                                        <b>Quality</b>
+                                    </div>
+                                    <div>
+                                        <a>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="quality category-section-body">
+                                    <button class="active" type="button" value="ultra">Ultra</button>
+                                    <button type="button"   value="extreme">
+                            Extreme
+                            <span  class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button>
+                                    <!-- <button type="button" value="max">
+                            Max
+                            <span class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button> -->
+                                    <p class="prem-text-para">To get more premium features, Please <a href="{{ url_for('login') }}">Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              browse
+                            </span>
+                                        <b>Image Grid</b>
+                                    </div>
+                                    <div>
+                                        <a>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="img_grid category-section-body">
+                                    <button class="active" type="button" value="1">1</button>
+                                    <button type="button" value="2">
+                            2
+                          </button>
+                                    <button type="button" value="3">
+                            3
+                          </button>
+                                    <button type="button" value="4">
+                            4
+                          </button>
+                                    <p class="prem-text-para">To get more premium features, Please <a href="{{ url_for('login') }}">Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              atr
+                            </span>
+                                        <b>Seed</b>
+                                    </div>
+                                    <div>
+                                        <a>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="seed category-section-body">
+                                    <input type="text" id="seed" placeholder="1550899509">
+                                    <button type="button" value="3">
+                            <span class="material-symbols-outlined">
+                              refresh
+                            </span>
+                          </button>
+                                    <p class="prem-text-para">To get more premium features, Please <a href="{{ url_for('login') }}">Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              sms
+                            </span>
+                                        <b>Navigate Prompt </b>
+                                    </div>
+                                </div>
+                                <div class="category-section-body">
+                                    <div class="generate-button-container">
+                                        <input type="text" id="navigate_prompt_image" name="navigate_prompt_image" placeholder="Type Navigate Prompt">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="onSubscriptionPage()" class="primary-btn-type">Get Premium!</button>
+                    </div>
+                </div>
+
+                <div id="videoTab" style="display: none;">
+                    <div class="describe">
+                        <h4>Describe</h4>
+                        <a id="settingIconInActiveVideo" onclick="onShowVideoSettingsOption()">
+                            <span class="material-symbols-outlined">
+                        settings
+                        </span>
+                        </a>
+                        <a id="settingIconActiveVideo" onclick="onHideVideoSettingsOption()">
+                            <span class="material-symbols-outlined">
+                        settings
+                        </span>
+                        </a>
+                    </div>
+
+                    <div id="createVideoPart">
+                        <div class="generate-button-container">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              sms
+                            </span>
+                                        <b>Prompt </b>
+                                    </div>
+                                </div>
+
+                                <div class="category-section-body">
+                                    <input type="text" id="video_text_input" name="video_text_input" placeholder="Type Prompt">
+                                </div>
+                            </div>
+
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              sms
+                            </span>
+                                        <b>Navigate Prompt </b>
+                                    </div>
+                                </div>
+                                <div class="category-section-body">
+                                    <input type="text" id="video_navigate_input" name="video_navigate_input" placeholder="Type Navigate Prompt">
+                                </div>
+                            </div>
+
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              woman
+                            </span>
+                                        <b>Poses</b>
+                                    </div>
+                                    <div>
+                                        <a>
+                                            <span class="material-symbols-outlined add-icon-tab">
+                                add
+                              </span>
+                                            <span class="material-symbols-outlined remove-icon-tab">
+                                remove
+                              </span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="ethnicity category-section-body">
+                                    <button type="button" value="default">Default</button>
+                                    <button type="button" value="blowjob">POV Blowjob</button>
+                                    <button type="button" value="cowgirl">POV Cowgirl</button>
+                                    <button type="button" value="kneeling">Kneeling</button>
+                                    <button type="button" value="bondage">Bondage</button>
+                                    <button type="button" value="doggystyle">POV Doggystyle</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="primary-btn-type spacingBottom">Create Video</button>
+                    </div>
+
+                    <div id="settingsVideoPart">
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              image
+                            </span>
+                                        <b>Image Size</b>
+                                    </div>
+                                    <div>
+                                        <a>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="category-section-body">
+                                    <button class="active" type="button" value="square">Square</button>
+                                    <button type="button" value="portrait">Portrait</button>
+                                    <button type="button"   value="landscape">
+                            Landscape
+                            <span class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button>
+                                    <p class="prem-text-para">To get more premium features, Please <a href="{{ url_for('login') }}">Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              image
+                            </span>
+                                        <b>Camera Motion</b>
+                                    </div>
+                                    <div>
+                                        <a>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="category-section-body">
+                                    <button class="active" type="button" value="still">Still</button>
+                                    <button type="button" value="in">In</button>
+                                    <button type="button"  value="out">
+                            Out
+                            <span class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button>
+                                    <button type="button"   value="tilt">
+                            Tilt
+                            <span class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button>
+                                    <button type="button"   value="rotate">
+                            Rotate
+                            <span class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button>
+                                    <button type="button"   value="pan">
+                            Pan
+                            <span class="material-symbols-outlined">
+                              lock
+                            </span>
+                          </button>
+                                    <p class="prem-text-para">To get more premium features, Please <a href="{{ url_for('login') }}">Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-part">
+                            <div class="category-section">
+                                <div class="category-section-header">
+                                    <div>
+                                        <span class="material-symbols-outlined">
+                              atr
+                            </span>
+                                        <b>Seed</b>
+                                    </div>
+                                    <div>
+                                        <a>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="category-section-body">
+                                    <input type="text" placeholder="1550899509">
+                                    <button type="button" value="3">
+                            <span class="material-symbols-outlined">
+                              refresh
+                            </span>
+                          </button>
+                                    <p class="prem-text-para">To get more premium features, Please <a href="{{ url_for('login') }}">Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button  onclick="onSubscriptionPage()" class="primary-btn-type">Get Premium!</button>
+                    </div>
+                </div>
+
+                <ul class="popup-navigation">
+                    <li>
+                        <a id="open-info-popup">About</a>
+                    </li>
+                    <li>
+                        <a id="open-guide-popup">Guide</a>
+                    </li>
+                    <li>
+                        <a id="open-faq-popup">FAQ</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="image-section">
+                <!-- Display the generated image here -->
+                <div data-tracking-id="{{ tracking_id }}" id="trackingIdContainer">
+                    <div id="imagesContainer">
+                        <img src="{% if image %}{{ image.url }}{% else %}https://aihentaigenerator.net/wp-content/uploads/2023/11/AIGDefaultimage.png{% endif %}" class="dynamic-image" id="defaultImage">
+                    </div>
+                    <div class="page-body-footer">
+                        <div id="reportImgSection" class="report-edit-btn-group">
+                            <button type="button" class="edit-button primary-btn-type" id="editImage">
+                        <span class="material-symbols-outlined">
+                          edit
+                          </span>
+                        Edit Image</button>
+                            <button type="button" class="report-btn" id="reportImage">
+                        <span class="material-symbols-outlined">
+                          warning
+                          </span>
+                          Report Image</button>
+                        </div>
+
+                        <div id="reportVideoSection" class="report-edit-btn-group">
+                            <button type="button" class="edit-button primary-btn-type">
+                        <span class="material-symbols-outlined">
+                          edit
+                          </span>
+                        Edit Video</button>
+                            <button type="button" class="report-btn">
+                        <span class="material-symbols-outlined">
+                          warning
+                          </span>
+                          Report Video</button>
+                        </div>
+
+                        <div class="report-reason-part">
+                            <div class="report-modal" id="reportModal" style="display: none;">
+                                <select id="reportReason">
+                            <option value="deepfake">Deepfake</option>
+                            <option value="illegalcontent">Illegal content</option>
+                            <option value="other">Other</option>
+                            <option value="underageperson">Underage person</option>
+                            <option value="personaldata">Personal data</option>
+                            <option value="publicname">Public name</option>
+                            <option value="dmca">DMCA</option>
+                          </select>
+                                <button class="primary-btn-type" id="sendReportButton">Send Report</button>
+                            </div>
+                        </div>
+
+                        <div class="queueSection" id="queueSection">
+                            <p id="queueStatus">
+                                <span class="material-symbols-outlined">
+                          schedule
+                          </span> Your queue is up in (0) seconds.</p>
+                            <a href="subscription" id="skipLineOption">Reduce Queue</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: none;" id="premBox" class="prem-box">
+                <div class="prem-box__header">
+                    <p>( Premium Features )</p>
+                    <a onclick="onTogglePremium()">
+                        <span class="material-symbols-outlined remove-icon">
+                    expand_more
+                  </span>
+                        <span class="material-symbols-outlined add-icon">
+                    expand_less
+                  </span>
+                    </a>
+                </div>
+                <b>Access to:</b>
+                <div class="button-section">
+                    <button type="button" id="self_attention" class="feature-button">
+                  <span class="material-symbols-outlined">
+                    camera
+                  </span>
+                  High Res
+                </button>
+                    <button type="button" id="panorama" class="feature-button">
+                  <span class="material-symbols-outlined">
+                    panorama_horizontal
+                  </span>
+                  Panorama</button>
+                    <button type="button" id="upscale" class="feature-button">
+                  <span class="material-symbols-outlined">
+                    crop_landscape
+                    </span>
+                  Landscape
+                  </button>
+                    <!-- <div class="space"></div> -->
+                    <button type="button" id="no_watermark" class="feature-button">
+                  <span class="material-symbols-outlined">
+                    humidity_low
+                    </span>
+                  Remove Watermark
+                </button>
+                    <button type="button" id="private_gallery" class="feature-button">
+                  <span class="material-symbols-outlined">
+                    hallway
+                    </span>
+                  Private Gallery
+                </button>
+                </div>
+                <div class="negative-prompt">
+                    <p> Negative Prompt </p>
+                    <input placeholder="Write your negative prompt to avoid..." type="text" id="negative_prompt" />
+                </div>
+                <div class="login-home2">
+                    {% if current_user.is_authenticated %} Hello, {{ current_user.nickname }}! {% else %}
+                    <a class="primary-btn-type" href="{{ url_for('login') }}">
+                        <span class="material-symbols-outlined">
+                    lock
+                    </span> Login to unlock premium
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <footer>
+        <p>
+            &copy; 2024 AI Hentai Generator. All rights reserved. |
+            <a href="https://info.aihentaigenerator.net/privacy-policy/">Privacy Policy</a
+          >
+          |
+          <a href="https://info.aihentaigenerator.net/child-protection/"
+            >Child Protection</a
+          >
+          |
+          <a href="https://info.aihentaigenerator.net/terms-of-service/"
+            >Terms of Service</a
+          >
+        </p>
+      </footer>
+
+      <!-- <div class="gallery">
+         <div class="gallery-filters d-flex justify-content-center mt-4 mb-4">
+            <button class="btn btn-primary mx-2 filter-button" data-filter="hot">Hot</button>
+            <button class="btn btn-primary mx-2 filter-button" data-filter="newest">Newest</button>
+            <button class="btn btn-primary mx-2 filter-button" data-filter="most-liked">Most Liked</button>
+         </div> -->
+         <!-- <div class="gallery container-fluid">
+            {% for image in images %}
+            <div class="gallery-item col-12 col-md-6 col-lg-4 col-xl-3" data-image-id="{{ image.id }}">
+               <a href="{{ url_for('home', image_id=image.id) }}" class="gallery-link">
+                  <div class="image-wrapper">
+                     <img src="{{ image.url }}" class="gallery-images" alt="Generated Image">
+                  </div>
+                  <div class="gallery-overlay">
+                     <span class="gallery-text">{{ image.text_input or "No description" }}</span>
+                  </div>
+               </a>
+            </div>
+            {% endfor %}
+            </div> -->
+            <!-- <footer>
+            <p>&copy; 2024 AI Hentai Generator. All rights reserved. | <a href="https://info.aihentaigenerator.net/privacy-policy/">Privacy Policy</a> | <a href="https://info.aihentaigenerator.net/child-protection/">Child Protection</a> | <a href="https://info.aihentaigenerator.net/terms-of-service/">Terms of Service</a></p>
+         </footer> -->
+            {% include 'modal.html' %}
+            </div>
+            <script src="https://js.stripe.com/v3/"></script>
+            
+            <script type="text/javascript" id="pap_x2s6df8d" src="https://aicreations.postaffiliatepro.com/scripts/kumajalw"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                window.trackingId = "{{ tracking_id }}";
+            </script>
+            <!-- Google tag (gtag.js) -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-HGLWRKMWZE"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+
+                function gtag() {
+                    dataLayer.push(arguments);
+                }
+                gtag('js', new Date());
+
+                gtag('config', 'G-HGLWRKMWZE');
+            </script>
+            <!-- Google tag (gtag.js) -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-JY64H3024L"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+
+                function gtag() {
+                    dataLayer.push(arguments);
+                }
+                gtag('js', new Date());
+
+                gtag('config', 'G-JY64H3024L');
+            </script>
+            <script>
+                function onSubscriptionPage() {
+                    window.location.href = 'subscription';
+                }
+
+                function onTogglePremium() {
+                    var element = document.getElementById("premBox");
+                    element.classList.toggle("premBoxToggle");
+                }
+
+                const tabs = document.querySelectorAll('.category-section-header');
+
+                // Functions
+                toggleCategory = (event) => {
+                    event.currentTarget.classList.toggle('inactive-body');
+                };
+
+                // Event Listeners
+                tabs.forEach((tab) => {
+                    tab.addEventListener('click', toggleCategory);
+                });
+
+                function onShowSettingsOption() {
+                    document.getElementById('createPart').style.display = 'none';
+                    document.getElementById('settingIconInActive').style.display = "none";
+                    document.getElementById('settingsPart').style.display = 'block';
+                    document.getElementById('settingIconActive').style.display = "block";
+                }
+
+                function onHideSettingsOption() {
+                    document.getElementById('settingsPart').style.display = 'none';
+                    document.getElementById('settingIconActive').style.display = "none";
+                    document.getElementById('createPart').style.display = 'block';
+                    document.getElementById('settingIconInActive').style.display = "block";
+                }
+
+                function onShowVideoSettingsOption() {
+                    document.getElementById('createVideoPart').style.display = 'none';
+                    document.getElementById('settingIconInActiveVideo').style.display = "none";
+                    document.getElementById('settingsVideoPart').style.display = 'block';
+                    document.getElementById('settingIconActiveVideo').style.display = "block";
+                }
+
+                function onHideVideoSettingsOption() {
+                    document.getElementById('settingsVideoPart').style.display = 'none';
+                    document.getElementById('settingIconActiveVideo').style.display = "none";
+                    document.getElementById('createVideoPart').style.display = 'block';
+                    document.getElementById('settingIconInActiveVideo').style.display = "block";
+                }
+                document.addEventListener("DOMContentLoaded", function() {
+
+                    document.getElementById("checkout-button").addEventListener("click", function() {
+                        var stripe_public_key = 'pk_live_51OE5GSJInIllC3Fua25gYYTtNpYvGQOo8VhNBCDDoNjwYdwuAJQr7ebxgkOKwzG3kZw88jLVmtVrIbxr3SNVlihy00RDGOJUTx';
+                        // Make a POST request to your server to get the session ID
+                        fetch('/create-checkout-session', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                // Add any necessary data in the request body
+                                body: JSON.stringify({
+                                    // Include user information or other details here if needed
+                                }),
+                            })
+                            .then(response => {
+                                if (response.redirected) {
+                                    window.location.href = response.url; // Redirects the user to the login page
+                                }
+                                return response.json();
+                            })
+                            .then(function(data) {
+                                onSubscriptionPage();
+                                // Use the session ID obtained from the server
+                                // var sessionId = data.sessionId;
+                                
+                                // // Redirect to the Checkout page
+                                // var stripe = Stripe(stripe_public_key);
+                                // stripe.redirectToCheckout({
+                                //     sessionId: sessionId, // Use the obtained session ID
+
+                                // }).then(function(result) {
+                                //     if (result.error) {
+                                //         var displayError = document.getElementById('error-message');
+                                //         displayError.textContent = result.error.message;
+                                //     }
+                                // });
+                            })
+                            .catch(function(error) {
+                                console.error(error);
+                            });
+                    });
+                });
+                // $('#checkout-button').on('click', function() {
+                //     $.post('/create-checkout-session', function(data) {
+                //         var sessionId = data.sessionId;
+
+                //         // Redirect to the Stripe-hosted checkout page
+                //         stripe.redirectToCheckout({
+                //             sessionId: sessionId
+                //         });
+                //     });
+                // });
+
+                $(document).ready(function() {
+                    $("#color_mode").on("change", function() {
+                        colorModePreview(this);
+                    })
+                });
+
+                function colorModePreview(ele) {
+                    if ($(ele).prop("checked") == true) {
+                        document.getElementById('imageTab').style.display = 'none';
+                        document.getElementById('videoTab').style.display = 'block';
+                        document.getElementById('reportImgSection').style.display = "none";
+                        document.getElementById('reportVideoSection').style.display = "flex";
+                    } else if ($(ele).prop("checked") == false) {
+                        document.getElementById('videoTab').style.display = 'none';
+                        document.getElementById('imageTab').style.display = 'block';
+                        document.getElementById('reportImgSection').style.display = "flex";
+                        document.getElementById('reportVideoSection').style.display = "none";
+                    }
+                }
+            </script>
+            <script src="{{ url_for('static', filename='script.js') }}"></script>
+            <!-- Include jQuery library -->
+</body>
+
+</html>

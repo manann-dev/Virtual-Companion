@@ -6,8 +6,6 @@ import random
 import re
 import time
 import traceback
-import threading
-
 
 import numpy as np
 import torch
@@ -27,8 +25,6 @@ from html_generator import generate_basic_html
 from logging_colors import logger
 from models import clear_torch_cache, local_rank
 
-shared.generation_lock = threading.Lock()
-# from chat import load_character
 
 def generate_reply(*args, **kwargs):
     shared.generation_lock.acquire()
@@ -38,97 +34,10 @@ def generate_reply(*args, **kwargs):
     finally:
         shared.generation_lock.release()
 
-# def generate_reply(question, state):
-#     shared.generation_lock.acquire()
-#     try:
-#         # Here, we call an internal function that actually processes the question and state
-#         response = _generate_reply(question, state)
-#         return response
-#     finally:
-#         shared.generation_lock.release()
-
-
-# def _generate_reply(question, state, stopping_strings=None, is_chat=False, escape_html=False, for_ui=False):
-
-#     # Find the appropriate generation function
-#     generate_func = apply_extensions('custom_generate_reply')
-#     if generate_func is None:
-#         if shared.model_name == 'None' or shared.model is None:
-#             logger.error("No model is loaded! Select one in the Model tab.")
-#             yield ''
-#             return
-        
-#         response = generate_func(question, state)
-#         yield response
-
-#         # if shared.model.__class__.__name__ in ['LlamaCppModel', 'Exllamav2Model']:
-#         #     generate_func = generate_reply_custom
-#         # else:
-#             # generate_func = generate_reply_HF
-
-
-#     if generate_func != generate_reply_HF and shared.args.verbose:
-#         logger.info("PROMPT=")
-#         print(question)
-#         print()
-
-#     # Prepare the input
-#     original_question = question
-#     if not is_chat:
-#         state = apply_extensions('state', state)
-#         question = apply_extensions('input', question, state)
-
-#     # Find the stopping strings
-#     all_stop_strings = []
-#     for st in (stopping_strings, state['custom_stopping_strings']):
-#         if type(st) is str:
-#             st = ast.literal_eval(f"[{st}]")
-
-#         if type(st) is list and len(st) > 0:
-#             all_stop_strings += st
-
-#     shared.stop_everything = False
-#     clear_torch_cache()
-#     seed = set_manual_seed(state['seed'])
-#     last_update = -1
-#     reply = ''
-#     is_stream = state['stream']
-#     if len(all_stop_strings) > 0 and not state['stream']:
-#         state = copy.deepcopy(state)
-#         state['stream'] = True
-
-#     # Generate
-#     for reply in generate_func(question, original_question, seed, state, stopping_strings, is_chat=is_chat):
-#         reply, stop_found = apply_stopping_strings(reply, all_stop_strings)
-#         if escape_html:
-#             reply = html.escape(reply)
-
-#         if is_stream:
-#             cur_time = time.time()
-
-#             # Limit number of tokens/second to make text readable in real time
-#             if state['max_tokens_second'] > 0:
-#                 diff = 1 / state['max_tokens_second'] - (cur_time - last_update)
-#                 if diff > 0:
-#                     time.sleep(diff)
-
-#                 last_update = time.time()
-#                 yield reply
-#             else:
-#                 yield reply
-
-#         if stop_found or (state['max_tokens_second'] > 0 and shared.stop_everything):
-#             break
-
-#     if not is_chat:
-#         reply = apply_extensions('output', reply, state)
-
-#     yield reply
 
 
 def _generate_reply(question, state, stopping_strings=None, is_chat=False, escape_html=False, for_ui=False):
-    from chat import generate_chat_prompt, get_generation_prompt
-    from extensions import apply_input_extensions
+
     # Find the appropriate generation function
     generate_func = apply_extensions('custom_generate_reply')
     if generate_func is None:
@@ -136,13 +45,13 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
             logger.error("No model is loaded! Select one in the Model tab.")
             yield ''
             return
-        
+
         if shared.model.__class__.__name__ in ['LlamaCppModel', 'Exllamav2Model']:
             generate_func = generate_reply_custom
         else:
             generate_func = generate_reply_HF
 
-    if generate_func!= generate_reply_HF and shared.args.verbose:
+    if generate_func != generate_reply_HF and shared.args.verbose:
         logger.info("PROMPT=")
         print(question)
         print()
@@ -151,64 +60,55 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
     original_question = question
     if not is_chat:
         state = apply_extensions('state', state)
-        logger.info(f"STATE={state}")
-        question = apply_input_extensions(question, state)
-        logger.info(f"QUESTION={question}")
+        question = apply_extensions('input', question, state)
+
     # Find the stopping strings
     all_stop_strings = []
     for st in (stopping_strings, state['custom_stopping_strings']):
-        if isinstance(st, str):
-            st = [st]  # Convert string to list
-        if isinstance(st, list) and len(st) > 0:
+        if type(st) is str:
+            st = ast.literal_eval(f"[{st}]")
+
+        if type(st) is list and len(st) > 0:
             all_stop_strings += st
-    # if shared.args.stopping_criteria:
-    #     all_stop_strings.extend(shared.args.stopping_criteria)
 
-    # Process the prompt
-    prompt = question
-    if is_chat:
-        prompt = generate_chat_prompt(question, state)
-    else:
-        prompt = get_generation_prompt(question, state)
+    shared.stop_everything = False
+    clear_torch_cache()
+    seed = set_manual_seed(state['seed'])
+    last_update = -1
+    reply = ''
+    is_stream = state['stream']
+    if len(all_stop_strings) > 0 and not state['stream']:
+        state = copy.deepcopy(state)
+        state['stream'] = True
 
-    # Yield the response
-    response = generate_func(prompt, state, all_stop_strings)
-    yield response
+    # Generate
+    for reply in generate_func(question, original_question, seed, state, stopping_strings, is_chat=is_chat):
+        reply, stop_found = apply_stopping_strings(reply, all_stop_strings)
+        if escape_html:
+            reply = html.escape(reply)
 
+        if is_stream:
+            cur_time = time.time()
 
+            # Limit number of tokens/second to make text readable in real time
+            if state['max_tokens_second'] > 0:
+                diff = 1 / state['max_tokens_second'] - (cur_time - last_update)
+                if diff > 0:
+                    time.sleep(diff)
 
+                last_update = time.time()
+                yield reply
+            else:
+                yield reply
 
+        if stop_found or (state['max_tokens_second'] > 0 and shared.stop_everything):
+            break
 
+    if not is_chat:
+        reply = apply_extensions('output', reply, state)
 
-# def encode(prompt, add_special_tokens=True, add_bos_token=True, truncation_length=None):
-#     if shared.tokenizer is None:
-#         raise ValueError('No tokenizer is loaded')
+    yield reply
 
-#     if shared.model.__class__.__name__ in ['LlamaCppModel', 'Exllamav2Model']:
-#         input_ids = shared.tokenizer.encode(str(prompt))
-#         if shared.model.__class__.__name__ not in ['Exllamav2Model']:
-#             input_ids = np.array(input_ids).reshape(1, len(input_ids))
-#     else:
-#         input_ids = shared.tokenizer.encode(str(prompt), return_tensors='pt', add_special_tokens=add_special_tokens)
-#         if not add_bos_token:
-#             while len(input_ids[0]) > 0 and input_ids[0][0] == shared.tokenizer.bos_token_id:
-#                 input_ids = input_ids[:, 1:]
-
-#     # Handling truncation
-#     if truncation_length is not None:
-#         input_ids = input_ids[:, -truncation_length:]
-
-#     if shared.model.__class__.__name__ in ['LlamaCppModel', 'Exllamav2Model'] or shared.args.cpu:
-#         return input_ids
-#     elif shared.args.deepspeed:
-#         return input_ids.to(device=local_rank)
-#     elif torch.backends.mps.is_available():
-#         device = torch.device('mps')
-#         return input_ids.to(device)
-#     elif is_torch_xpu_available():
-#         return input_ids.to("xpu:0")
-#     else:
-#         return input_ids.cuda()
 
 from models import get_tokenizer
 def encode(prompt, add_special_tokens=True, add_bos_token=True, truncation_length=None):
@@ -349,190 +249,24 @@ def get_reply_from_output_ids(output_ids, state=None, starting_from=0):
 
     return reply
 
-from flask import g
-
-# def generate_reply_HF(question, original_question, seed, state, stopping_strings=None, is_chat=False):
-#     try:
-#         generate_params = {}
-#         for k in ['max_new_tokens', 'temperature', 'temperature_last', 'dynamic_temperature', 'dynatemp_low', 'dynatemp_high', 'dynatemp_exponent', 'smoothing_factor', 'smoothing_curve', 'top_p', 'min_p', 'top_k', 'repetition_penalty', 'presence_penalty', 'frequency_penalty', 'repetition_penalty_range', 'typical_p', 'tfs', 'top_a', 'guidance_scale', 'penalty_alpha', 'mirostat_mode', 'mirostat_tau', 'mirostat_eta', 'do_sample', 'encoder_repetition_penalty', 'no_repeat_ngram_size']:
-#             if k in state:
-#                 generate_params[k] = state[k]
-
-#         if isinstance(state['sampler_priority'], list) and len(state['sampler_priority']) > 0:
-#             generate_params['sampler_priority'] = state['sampler_priority']
-#         elif isinstance(state['sampler_priority'], str) and state['sampler_priority'].strip() != '':
-#             generate_params['sampler_priority'] = [x.strip() for x in state['sampler_priority'].replace('\n', ',').split(',') if x.strip()]
-
-#         # if state['negative_prompt'] != '':
-#             # generate_params['negative_prompt_ids'] = encode(state['negative_prompt'])
-#         if 'tokenizer' not in g:
-#             raise Exception("Tokenizer is not loaded. Please load the tokenizer before calling this function.")
-        
-#         if 'negative_prompt' in state and state['negative_prompt'] != '':
-#             generate_params['negative_prompt_ids'] = encode(state['negative_prompt'])
-#         else:
-#             logger.info("No negative_prompt found in the state; proceeding without it.")
-
-#         prompt_lookup_num_tokens = state.get('prompt_lookup_num_tokens', 0)
-#         if prompt_lookup_num_tokens > 0:
-#             generate_params['prompt_lookup_num_tokens'] = prompt_lookup_num_tokens
-
-#         for k in ['epsilon_cutoff', 'eta_cutoff']:
-#             if state[k] > 0:
-#                 generate_params[k] = state[k] * 1e-4
-
-#         if state['ban_eos_token']:
-#             generate_params['suppress_tokens'] = [shared.tokenizer.eos_token_id]
-
-#         if state['custom_token_bans']:
-#             to_ban = [int(x) for x in state['custom_token_bans'].split(',')]
-#             if len(to_ban) > 0:
-#                 if generate_params.get('suppress_tokens', None):
-#                     generate_params['suppress_tokens'] += to_ban
-#                 else:
-#                     generate_params['suppress_tokens'] = to_ban
-
-#         generate_params.update({'use_cache': not shared.args.no_cache})
-#         if shared.args.deepspeed:
-#             generate_params.update({'synced_gpus': True})
-
-#         # Encode the input
-#         input_ids = encode(question, add_bos_token=state['add_bos_token'], truncation_length=get_max_prompt_length(state))
-#         output = input_ids[0]
-#         cuda = not any((shared.args.cpu, shared.args.deepspeed))
-#         if state['auto_max_new_tokens']:
-#             generate_params['max_new_tokens'] = state['truncation_length'] - input_ids.shape[-1]
-#         if 'tokenizer' not in globals():
-#             raise Exception("Tokenizer is not loaded. Please load the tokenizer before calling this function.")
-#         # Add the encoded tokens to generate_params
-#         question, input_ids, inputs_embeds = apply_extensions('tokenizer', state, question, input_ids, None)
-#         original_input_ids = input_ids
-#         generate_params.update({'inputs': input_ids})
-#         if inputs_embeds is not None:
-#             generate_params.update({'inputs_embeds': inputs_embeds})
-
-#         # Stopping criteria / eos token
-#         eos_token_ids = [shared.tokenizer.eos_token_id] if shared.tokenizer.eos_token_id is not None else []
-#         generate_params['eos_token_id'] = eos_token_ids
-#         generate_params['stopping_criteria'] = transformers.StoppingCriteriaList()
-#         generate_params['stopping_criteria'].append(_StopEverythingStoppingCriteria())
-
-#         # Logits processor
-#         processor = state.get('logits_processor', LogitsProcessorList([]))
-#         if not isinstance(processor, LogitsProcessorList):
-#             processor = LogitsProcessorList([processor])
-
-#         # Grammar
-#         if state['grammar_string'].strip() != '':
-#             grammar = initialize_grammar(state['grammar_string'])
-#             grammar_processor = GrammarConstrainedLogitsProcessor(grammar)
-#             processor.append(grammar_processor)
-
-#         apply_extensions('logits_processor', processor, input_ids)
-#         generate_params['logits_processor'] = processor
-
-#         if shared.args.verbose:
-#             logger.info("GENERATE_PARAMS=")
-#             filtered_params = {key: value for key, value in generate_params.items() if not isinstance(value, torch.Tensor)}
-#             pprint.PrettyPrinter(indent=4, sort_dicts=False).pprint(filtered_params)
-#             print()
-
-#             logger.info("PROMPT=")
-#             print(decode(input_ids[0], skip_special_tokens=False))
-#             print()
-
-#         # Handle StreamingLLM for llamacpp_HF
-#         if shared.model.__class__.__name__ == 'LlamacppHF' and shared.args.streaming_llm:
-#             tmp = process_llamacpp_cache(shared.model.model, input_ids[-1].tolist(), shared.model.model._input_ids.tolist())
-#             shared.model.past_seq = torch.tensor(tmp)
-#             shared.model.save_cache()
-
-#         t0 = time.time()
-#         t1 = None
-#         try:
-#             t1 = time.time()
-
-#             if not is_chat and not shared.is_seq2seq:
-#                 yield ''
-
-#             # Generate the entire reply at once.
-#             if not state['stream']:
-#                 with torch.no_grad():
-#                     output = shared.model.generate(**generate_params)[0]
-#                     if cuda:
-#                         output = output.cuda()
-
-#                 starting_from = 0 if shared.is_seq2seq else len(input_ids[0])
-#                 yield get_reply_from_output_ids(output, state, starting_from=starting_from)
-
-#             # Stream the reply 1 token at a time.
-#             # This is based on the trick of using 'stopping_criteria' to create an iterator.
-#             else:
-
-#                 def generate_with_callback(callback=None, *args, **kwargs):
-#                     kwargs['stopping_criteria'].append(Stream(callback_func=callback))
-#                     clear_torch_cache()
-#                     with torch.no_grad():
-#                         shared.model.generate(**kwargs)
-
-#                 def generate_with_streaming(**kwargs):
-#                     return Iteratorize(generate_with_callback, [], kwargs, callback=None)
-
-#                 with generate_with_streaming(**generate_params) as generator:
-#                     cumulative_reply = ''
-#                     starting_from = 0 if shared.is_seq2seq else len(input_ids[0])
-#                     for output in generator:
-#                         if output[-1] in eos_token_ids:
-#                             break
-
-#                         new_content = get_reply_from_output_ids(output, state, starting_from=starting_from)
-#                         # check the partial unicode character
-#                         if chr(0xfffd) in new_content:
-#                             continue
-
-#                         cumulative_reply += new_content
-#                         starting_from = len(output)
-#                         yield cumulative_reply
-
-#         except Exception:
-#             traceback.print_exc()
-#             if t1 is None:
-#                 t1 = time.time()
-#                 print(f'Failed to generate response in {(t1-t0):.2f} seconds')
-#                 raise
-#         finally:
-            
-#             original_tokens = len(original_input_ids[0])
-#             new_tokens = len(output) - (original_tokens if not shared.is_seq2seq else 0)
-#             print(f'Output generated in {(t1-t0):.2f} seconds ({new_tokens/(t1-t0):.2f} tokens/s, {new_tokens} tokens, context {original_tokens}, seed {seed})')
-#             return
-
-#     except KeyError as e:
-#         logger.error(f"Missing configuration parameter: {e}")
-#         raise ValueError(f"Required configuration parameter not found: {e}")
-#     except Exception as e:
-#         logger.error(f"An unexpected error occurred during response generation: {str(e)}")
-#         raise RuntimeError(f"Failed to generate response: {str(e)}")
-#     finally:
-#         logger.info(f"Generation completed. Time taken: {(t1-t0):.2f} seconds")
-
-def generate_reply_HF(question, original_question, seed, state, stopping_strings=None,character='Sakura Tanaka', is_chat=False):
+def generate_reply_HF(question, original_question, seed, state, stopping_strings=None, character='Sakura Tanaka', is_chat=False):
     from chat import load_character
     t0 = time.time()
-    t1 = None  # Initialize t1
+    t1 = None 
 
     character_profile = load_character(character, state['name1'], state['name2'])
-    # logger.info(f"Character profile: {character_profile}")
-    # modified_question = character_profile['style_prefix'] + question
-    # logger.info(f"Modified question: {modified_question}")
+    name1, name2, encoded_string, greeting, context = character_profile
 
-    # state['temperature'] = character_profile['temperature']
-    # logger.info(f"Temperature: {state['temperature']}")
-    # state['top_p'] = character_profile['top_p']
-    # state['repetition_penalty'] = character_profile['repetition_penalty']
+    if 'conversation_history' not in state:
+        state['conversation_history'] = f"{context}\n\n{greeting}"
+
+    state['conversation_history'] += f"\nUser: {question}\n{character}:"
+
+    modified_question = state['conversation_history']
+
     try:
         generate_params = {}
-        for k in ['eta_cutoff','epsilon_cutoff','max_new_tokens', 'temperature', 'temperature_last', 'dynamic_temperature', 'dynatemp_low', 'dynatemp_high', 'dynatemp_exponent', 'smoothing_factor', 'smoothing_curve', 'top_p', 'min_p', 'top_k', 'repetition_penalty', 'presence_penalty', 'frequency_penalty', 'repetition_penalty_range', 'typical_p', 'tfs', 'top_a', 'guidance_scale', 'penalty_alpha', 'mirostat_mode', 'mirostat_tau', 'mirostat_eta', 'do_sample', 'encoder_repetition_penalty', 'no_repeat_ngram_size']:
+        for k in ['eta_cutoff', 'epsilon_cutoff', 'max_new_tokens', 'temperature', 'temperature_last', 'dynamic_temperature', 'dynatemp_low', 'dynatemp_high', 'dynatemp_exponent', 'smoothing_factor', 'smoothing_curve', 'top_p', 'min_p', 'top_k', 'repetition_penalty', 'presence_penalty', 'frequency_penalty', 'repetition_penalty_range', 'typical_p', 'tfs', 'top_a', 'guidance_scale', 'penalty_alpha', 'mirostat_mode', 'mirostat_tau', 'mirostat_eta', 'do_sample', 'encoder_repetition_penalty', 'no_repeat_ngram_size']:
             if k in state:
                 generate_params[k] = state[k]
 
@@ -569,8 +303,8 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
         if shared.args.deepspeed:
             generate_params.update({'synced_gpus': True})
 
-        input_ids = encode(question, add_bos_token=state['add_bos_token'], truncation_length=get_max_prompt_length(state))
-        print("input_ids length:",len(input_ids))
+        input_ids = encode(modified_question, add_bos_token=state['add_bos_token'], truncation_length=get_max_prompt_length(state))
+        print("input_ids length:", len(input_ids))
         if input_ids.numel() > 0:
             output = input_ids[0]
         else:
@@ -578,7 +312,7 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
         cuda = not any((shared.args.cpu, shared.args.deepspeed))
         if state['auto_max_new_tokens']:
             generate_params['max_new_tokens'] = state['truncation_length'] - input_ids.shape[-1]
-        
+
         question, input_ids, inputs_embeds = apply_extensions('tokenizer', state, question, input_ids, None)
         original_input_ids = input_ids
         generate_params.update({'inputs': input_ids})
@@ -596,16 +330,13 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
         if not isinstance(processor, LogitsProcessorList):
             processor = LogitsProcessorList([processor])
 
-        # if state['grammar_string'].strip() != '':
-        #     grammar = initialize_grammar(state['grammar_string'])
+        # Temporarily comment out grammar constraints for testing
+        # grammar_file_name = state.get('grammar_file_name', 'None')
+        # grammar = initialize_grammar(grammar_file_name)
+
+        # if grammar is not None:
         #     grammar_processor = GrammarConstrainedLogitsProcessor(grammar)
         #     processor.append(grammar_processor)
-        grammar_file_name = state.get('grammar_file_name', 'None')
-        grammar = initialize_grammar(grammar_file_name)
-
-        if grammar is not None:
-            grammar_processor = GrammarConstrainedLogitsProcessor(grammar)
-            processor.append(grammar_processor)
 
         apply_extensions('logits_processor', processor, input_ids)
         generate_params['logits_processor'] = processor
@@ -628,25 +359,12 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
         t0 = time.time()
         if not is_chat and not shared.is_seq2seq:
             yield ''
-        valid_generate_params = {k: v for k, v in generate_params.items()
-                          if k not in ['do_sample', 'top_k', 'top_p']}
-        # Generate the entire reply at once.
-        # if not state.get('stream'):  # Corrected line
-        #     with torch.no_grad():
-        #         output = shared.model.generate(**valid_generate_params)[0]
-        #         if cuda:
-        #             output = output.cuda()
-
-        #     starting_from = 0 if shared.is_seq2seq else len(input_ids[0])
-        #     yield get_reply_from_output_ids(output, state, starting_from=starting_from)
-
-        # else:
+        valid_generate_params = {k: v for k, v in generate_params.items() if k not in ['do_sample', 'top_k', 'top_p']}
 
         def generate_with_streaming(**kwargs):
             return Iteratorize(generate_with_callback, [], kwargs, callback=None)
 
         def generate_with_callback(callback=None, *args, **kwargs):
-            # Adjust stopping criteria and other parameters for streaming
             kwargs['stopping_criteria'].append(Stream(callback_func=callback))
             clear_torch_cache()
             with torch.no_grad():
@@ -660,7 +378,6 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
                     break
 
                 new_content = get_reply_from_output_ids(output, state, starting_from=starting_from)
-                # Handling of partial unicode characters and other specifics
                 if chr(0xfffd) in new_content:
                     continue
 
@@ -673,13 +390,12 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
         if t1 is None:
             t1 = time.time()
             original_tokens = len(original_input_ids[0])
-            new_tokens = len(output) - (original_tokens if not shared.is_seq2seq else 0)       
+            new_tokens = len(output) - (original_tokens if not shared.is_seq2seq else 0)
             print(f'Error occurred. Time until error: {(t1-t0):.2f} seconds')
         raise
     finally:
-        if t1 is not None:  # Check if t1 is set before using it
+        if t1 is not None:
             print(f'Generation completed. Time taken: {(t1-t0):.2f} seconds')
-
 
 
 

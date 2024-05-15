@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="apple-touch-icon" sizes="180x180" href="ailogo1.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/fTYbH36n/brand-logo.png">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+      <script src="/static/script.js" defer></script>
+      <meta name="google-site-verification" content="WX6GZGH8xWmy0lWn2zY9Ulba8xLBKg3E81AnPyRClCk" />
+      <script>
+         (function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');
+      </script>
+      <script async src='https://r.wdfl.co/rw.js' data-rewardful='52d969'></script>
+      <title>AI Hentai Generator</title>
+      <meta name="description" content="A easy to use AI Hentai Generator, made to generate all your AI hentai!">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined"
+      rel="stylesheet">
+   </head>
+   <body>
+      <!-- <div class="header">
+         <button class="menu-button" id="toggle-sidebar">☰</button>
+
+         <div class="auth-buttons">
+         <a href="https://www.aihentaigenerator.net/login">
+         <button class="header-button">Sign In</button>
+         </a>
+         <a href="https://www.aihentaigenerator.net/create-account">
+         <button class="header-button2">Register</button>
+         </a>
+
+         </div>
+
+         </div> -->
+         <button class="menu-button" id="toggle-sidebar">☰</button>
+        <div class="header-new">
+            <div class="header-new__logo">
+                <a href="/">
+                    <img width="90" src="https://i.postimg.cc/fTYbH36n/brand-logo.png" alt="" />
+                </a>
+            </div>
+            <div class="header-new__links">
+                <ul>
+                <li>
+                    <a href="/">Create</a>
+                </li>
+                <li>
+                    <a href="/edit">Edit</a>
+                </li>
+                <li>
+                    <a href="/gallery">Gallery</a>
+                </li>
+                <li>
+                    <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+                </li>
+                <li>
+                    <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+                </li>
+                <li>
+                    <a href="/subscription">Subscription</a>
+                </li>
+                <li>
+                    <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+                </li>
+                </ul>
+            </div>
+            <div class="header-new__actions">
+                <a href="https://www.aihentaigenerator.net/login">
+                <button class="header-button">Sign In</button>
+                </a>
+                <a href="https://www.aihentaigenerator.net/create-account">
+                <button class="header-button2">Register</button>
+                </a>
+            </div>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="menu-items">
+                <a href="https://www.aihentaigenerator.net/">Home</a>
+                <a href="https://shop.aihentaigenerator.net/">Shop</a>
+                <a href="https://info.aihentaigenerator.net/faq/">FAQ</a>
+                <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+                <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+                <a href="https://info.aihentaigenerator.net/subscription">Subscription</a>
+                <a href="https://www.aihentaigenerator.net/gallery">Gallery</a>
+                <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+            </div>
+        </div>
+        <div class="">
+            <div class="subscription-container">
+                <div class="announcement-bar">
+                    <b>50% off premium subscription</b>
+                </div>
+
+                <div class="subscription-box">
+                    <h2>Premium</h2>
+                    <h3>$9.99 <span>$19.99</span></h3>
+                    <small>per month</small>
+                    <ul>
+                        <li>
+                            <span>&#10003;</span>
+                            Unlimited generations</li>
+                        <li>
+                            <span>&#10003;</span>
+                            Premium Settings</li>
+                        <li>
+                            <span>&#10003;</span>
+                            No watermark</li>
+                        <li>
+                            <span>&#10003;</span>
+                            Reduced queue</li>
+                        <li>
+                            <span>&#10003;</span>
+                            Image quality</li>
+                        <li>
+                            <span>&#10003;</span>
+                            Image size</li>
+                        <li>
+                            <span>&#10003;</span>
+                            Image grid</li>
+                        <li>
+                            <span>&#10003;</span>
+                            Detailed edit</li>
+                        <li>
+                            <span>&#10003;</span>
+                            Video (coming soon)</li>
+                    </ul>
+                    <button id="checkout-button" type="button" class="edit-button primary-btn-type">Checkout</button>
+                </div>
+
+                <div class="faq-section">
+                    <h4>Frequently Asked Questions</h4>
+
+                    <div class="faq-row">
+                        <div class="faq-header inactive-body">
+                            <div>
+                                <span>Can I cancel my subscription plan?</span>
+                            </div>
+                            <div>
+                                <a>
+                                    <span>&#8964;</span>
+                                    <span>&#8963;</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="faq-body">
+                            <p>You are free to cancel your subscription at any time. You will be able to keep using Premium features for the remainder of the billing cycle. Come back to us anytime with our fast and easy payment methods.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-row">
+                        <div class="faq-header inactive-body">
+                            <div>
+                                <span>Who owns the copyright to the images?</span>
+                            </div>
+                            <div>
+                                <a>
+                                    <span>&#8964;</span>
+                                    <span>&#8963;</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="faq-body">
+                            <p>You own the images you generate. However, you grant Ai Hentai Generator a copy to use for our website. Read more on our Terms of Service.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-row">
+                        <div class="faq-header inactive-body">
+                            <div>
+                                <span>How do I cancel my subscription?</span>
+                            </div>
+                            <div>
+                                <a>
+                                    <span>&#8964;</span>
+                                    <span>&#8963;</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="faq-body">
+                            <p>To cancel your subscription contact us on our website to speak to our team and we will cancel your subscription!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+         {% include 'modal.html' %}
+      </div>
+      <footer>
+        <p>
+          &copy; 2024 AI Hentai Generator. All rights reserved. |
+          <a href="https://info.aihentaigenerator.net/privacy-policy/"
+            >Privacy Policy</a
+          >
+          |
+          <a href="https://info.aihentaigenerator.net/child-protection/"
+            >Child Protection</a
+          >
+          |
+          <a href="https://info.aihentaigenerator.net/terms-of-service/"
+            >Terms of Service</a
+          >
+        </p>
+      </footer>
+      <script src="https://js.stripe.com/v3/"></script>
+      <script type="text/javascript" id="pap_x2s6df8d" src="https://aicreations.postaffiliatepro.com/scripts/kumajalw"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+         window.trackingId = "{{ tracking_id }}";
+
+      </script>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HGLWRKMWZE"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+
+         gtag('config', 'G-HGLWRKMWZE');
+      </script>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-JY64H3024L"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+
+         gtag('config', 'G-JY64H3024L');
+      </script>
+      <script>
+        const tabs = document.querySelectorAll('.faq-header');
+
+        // Functions
+        toggleCategory = (event) => {
+            event.currentTarget.classList.toggle('inactive-body');
+        };
+
+        // Event Listeners
+        tabs.forEach((tab) => {
+            tab.addEventListener('click', toggleCategory);
+        });
+      </script>
+      <script src="{{ url_for('static', filename='script.js') }}"></script>
+      <!-- Include jQuery library -->
+   </body>
+</html>

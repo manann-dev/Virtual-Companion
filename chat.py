@@ -998,3 +998,21 @@ def my_yaml_output(data):
             result += "  " + line.rstrip(' ') + "\n"
 
     return result
+
+
+def update_character_state(state, question):
+    # Update the character's mood based on the user's input
+    if question.contains_positive_keywords():
+        state['mood'] = 'happy'
+    elif question.contains_negative_keywords():
+        state['mood'] = 'ad'
+
+    # Update the character's goals based on the user's input
+    if question.contains_goal_related_keywords():
+        state['goals'].append(question)
+
+    # Update the character's knowledge based on the user's input
+    if question.contains_knowledge_related_keywords():
+        state['knowledge'][question] = True
+
+    return state
