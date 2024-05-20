@@ -88,7 +88,7 @@ call "%CONDA_ROOT_PREFIX%\condabin\conda.bat" activate "%INSTALL_ENV_DIR%" || ( 
 
 @rem Run Flask server
 echo Starting Flask server...
-python api.py
+python main.py
 
 :end
 pause
