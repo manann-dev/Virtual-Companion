@@ -537,18 +537,42 @@ class IncrementalGrammarConstraint(GrammarConstraint):
         logger.debug(f"sum of acceptance: {acceptance.sum()}")
         return acceptance
 
-    # For each sub-rule in the grammar, cache whether each byte is accepted.
-    @lru_cache(maxsize=None)
+    # # For each sub-rule in the grammar, cache whether each byte is accepted.
+    # @lru_cache(maxsize=None)
+    # def pos_char_acceptance(self, pos):
+    #     acceptance = [False] * 256
+    #     num_chars = self.grammar_encoding[pos]
+    #     pos += 1
+    #     for i in range(0, num_chars, 2):
+    #         start = self.grammar_encoding[pos + i]
+    #         end = self.grammar_encoding[pos + i + 1]
+    #         for j in range(start, end + 1):
+    #             acceptance[j] = True
+    #     return acceptance
     def pos_char_acceptance(self, pos):
         acceptance = [False] * 256
-        num_chars = self.grammar_encoding[pos]
-        pos += 1
-        for i in range(0, num_chars, 2):
-            start = self.grammar_encoding[pos + i]
-            end = self.grammar_encoding[pos + i + 1]
-            for j in range(start, end + 1):
-                acceptance[j] = True
+        try:
+            num_chars = self.grammar_encoding[pos]
+            pos += 1
+            for i in range(0, num_chars, 2):
+                start = self.grammar_encoding[pos + i]
+                end = self.grammar_encoding[pos + i + 1]
+                if start < 0 or end >= 256:
+                    logger.error(f"Invalid start or end: start={start}, end={end}, pos={pos}, num_chars={num_chars}")
+                    raise IndexError(f"Invalid start or end index: start={start}, end={end}")
+                for j in range(start, end + 1):
+                    acceptance[j] = True
+        except IndexError as e:
+            logger.error(f"IndexError in pos_char_acceptance: {e}")
+            logger.error(f"pos={pos}, num_chars={num_chars}, grammar_encoding={self.grammar_encoding}")
+            raise
+        except Exception as e:
+            logger.error(f"Unexpected error in pos_char_acceptance: {e}")
+            raise
         return acceptance
+
+
+
 
     # Probably this should be configurable. If the grammar has an exceedingly
     # large number of states, the correct setting is a tradeoff between GPU

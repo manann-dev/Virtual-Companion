@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+      (function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');
+    </script>
+    <script async src='https://r.wdfl.co/rw.js' data-rewardful='52d969'></script>
+
+
+
+</head>
+<body>
+
+
+
+<div class="header">
+            <button class="menu-button" id="toggle-sidebar">☰</button>
+
+        <div class="auth-buttons">
+        <a href="https://www.aihentaigenerator.net/login">
+            <button class="header-button">Sign In</button>
+        </a>
+        <a href="https://www.aihentaigenerator.net/create-account">
+            <button class="header-button2">Register</button>
+        </a>
+
+        </div>
+
+    </div>
+
+
+ <div class="sidebar" id="sidebar">
+        <div class="menu-items">
+            <a href="https://www.aihentaigenerator.net/">Home</a>
+            <a href="https://info.aihentaigenerator.net/faq/">FAQ</a>
+            <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+            <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+            <a href="https://info.aihentaigenerator.net/subscription">Subscription</a>
+            <a href="https://www.aihentaigenerator.net/gallery">Gallery</a>
+            <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+
+        </div>
+    </div>
+
+
+<footer>
+  <p>&copy; 2024 AI Hentai Generator. All rights reserved. | <a href="https://info.aihentaigenerator.net/privacy-policy/">Privacy Policy</a> | <a href="https://info.aihentaigenerator.net/child-protection/">Child Protection</a> | <a href="https://info.aihentaigenerator.net/terms-of-service/">Terms of Service</a></p>
+</footer>
+
+
+ <script type="text/javascript" id="pap_x2s6df8d" src="https://aicreations.postaffiliatepro.com/scripts/kumajalw"></script>
+    <script type="text/javascript">
+        PostAffTracker.setAccountId('default1');
+
+        var sale = PostAffTracker.createSale();
+        sale.setTotalCost('{{ total_cost }}');  // Use the variables passed from the Flask route
+        sale.setOrderID('{{ order_id }}');
+        sale.setProductID('{{ product_id }}');
+
+        PostAffTracker.register();
+    </script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JY64H3024L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JY64H3024L');
+</script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="https://js.stripe.com/v3/"></script>
+</body>
+
+
+</html>

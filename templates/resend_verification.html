@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://www.dwin1.com/65546.js" type="text/javascript" defer="defer"></script>
+
+</head>
+<body>
+
+
+
+<div class="header">
+            <button class="menu-button" id="toggle-sidebar">☰</button>
+
+        <div class="auth-buttons">
+        <a href="https://www.aihentaigenerator.net/login">
+            <button class="header-button">Sign In</button>
+        </a>
+        <a href="https://www.aihentaigenerator.net/create-account">
+            <button class="header-button2">Register</button>
+        </a>
+
+        </div>
+
+    </div>
+
+
+ <div class="sidebar" id="sidebar">
+        <div class="menu-items">
+            <a href="https://www.aihentaigenerator.net/">Home</a>
+            <a href="https://info.aihentaigenerator.net/faq/">FAQ</a>
+            <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+            <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+            <a href="https://info.aihentaigenerator.net/subscription">Subscription</a>
+            <a href="https://www.aihentaigenerator.net/gallery">Gallery</a>
+            <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+
+        </div>
+    </div>
+
+    <div class="resend-container">
+        <h2>Resend Verification Email</h2>
+        <form method="POST" action="{{ url_for('resend_verification') }}">
+            <div class="form-group">
+                <label for="email"></label>
+                <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email">
+            </div>
+            <button type="submit" class="btn btn-primary">Resend Verification Email</button>
+        </form>
+    </div>
+<footer>
+
+
+  <p>&copy; 2024 AI Hentai Generator. All rights reserved. | <a href="https://info.aihentaigenerator.net/privacy-policy/">Privacy Policy</a> | <a href="https://info.aihentaigenerator.net/child-protection/">Child Protection</a> | <a href="https://info.aihentaigenerator.net/terms-of-service/">Terms of Service</a></p>
+</footer>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JY64H3024L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JY64H3024L');
+</script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JY64H3024L"></script>
+
+</html>

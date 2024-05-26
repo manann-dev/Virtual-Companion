@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="apple-touch-icon" sizes="180x180" href="ailogo1.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/fTYbH36n/brand-logo.png">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+      <script src="/static/script.js" defer></script>
+      <meta name="google-site-verification" content="WX6GZGH8xWmy0lWn2zY9Ulba8xLBKg3E81AnPyRClCk" />
+      <script>
+         (function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');
+      </script>
+      <script async src='https://r.wdfl.co/rw.js' data-rewardful='52d969'></script>
+      <title>AI Hentai Generator</title>
+      <meta name="description" content="A easy to use AI Hentai Generator, made to generate all your AI hentai!">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined"
+      rel="stylesheet">
+   </head>
+   <body>
+      <!-- <div class="header">
+         <button class="menu-button" id="toggle-sidebar">☰</button>
+
+         <div class="auth-buttons">
+         <a href="https://www.aihentaigenerator.net/login">
+         <button class="header-button">Sign In</button>
+         </a>
+         <a href="https://www.aihentaigenerator.net/create-account">
+         <button class="header-button2">Register</button>
+         </a>
+
+         </div>
+
+         </div> -->
+         <button class="menu-button" id="toggle-sidebar">☰</button>
+      <div class="header-new">
+        <div class="header-new__logo">
+          <a href="/">
+              <img width="90" src="https://i.postimg.cc/fTYbH36n/brand-logo.png" alt="" />
+          </a>
+      </div>
+         <div class="header-new__links">
+            <ul>
+              <li>
+                <a href="/">Create</a>
+              </li>
+              <li>
+                <a href="/edit">Edit</a>
+              </li>
+              <li>
+                <a href="/gallery">Gallery</a>
+              </li>
+              <li>
+                <a href="/image-explore">Explore</a>
+              </li>
+              <li>
+                <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+              </li>
+              <li>
+                <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+              </li>
+              <li>
+                <a href="/subscription">Subscription</a>
+              </li>
+              <li>
+                <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+              </li>
+            </ul>
+         </div>
+         <div class="header-new__actions">
+            <a href="https://www.aihentaigenerator.net/login">
+            <button class="header-button">Sign In</button>
+            </a>
+            <a href="https://www.aihentaigenerator.net/create-account">
+            <button class="header-button2">Register</button>
+            </a>
+         </div>
+      </div>
+      <div class="sidebar" id="sidebar">
+         <div class="menu-items">
+            <a href="https://www.aihentaigenerator.net/">Home</a>
+            <a href="https://shop.aihentaigenerator.net/">Shop</a>
+            <a href="https://info.aihentaigenerator.net/faq/">FAQ</a>
+            <a href="https://info.aihentaigenerator.net/rules/">Rules</a>
+            <a href="https://info.aihentaigenerator.net/contact-us/">Contact</a>
+            <a href="https://info.aihentaigenerator.net/subscription">Subscription</a>
+            <a href="https://www.aihentaigenerator.net/gallery">Gallery</a>
+            <a href="https://www.aihentaigenerator.net/logout">Logout</a>
+         </div>
+      </div>
+
+      <div class="announcement-bar announcement-bar-fixed">
+        <b>50% off premium subscription</b>
+      </div>
+
+      <div class="container">
+
+         <div class="grid-container">
+            <div class="text-section" id="text-section">
+                <div>
+                  <div id="createVideoPart">
+                    <div class="generate-button-container">
+                      <div class="category-section">
+                        <div class="category-section-header">
+                          <div>
+                            <span class="material-symbols-outlined">
+                              sms
+                            </span>
+                            <b>Prompt </b>
+                          </div>
+                        </div>
+
+                        <div class="category-section-body">
+                          <input type="text" id="video_text_input" name="video_text_input" placeholder="Type Prompt">
+                        </div>
+                      </div>
+
+                      <div class="category-section">
+                        <div class="category-section-header">
+                          <div>
+                            <span class="material-symbols-outlined">
+                              sms
+                            </span>
+                            <b>Navigate Prompt </b>
+                          </div>
+                        </div>
+                        <div class="category-section-body">
+                          <input type="text" id="video_navigate_input" name="video_navigate_input" placeholder="Type Navigate Prompt">
+                        </div>
+                      </div>
+
+                      <div class="category-section">
+                        <div class="category-section-header">
+                          <div>
+                            <span class="material-symbols-outlined">
+                              woman
+                            </span>
+                            <b>Style</b>
+                          </div>
+                          <div>
+                            <a>
+                              <span class="material-symbols-outlined add-icon-tab">
+                                add
+                              </span>
+                              <span class="material-symbols-outlined remove-icon-tab">
+                                remove
+                              </span>
+                            </a>
+                          </div>
+                        </div>
+
+                        <div class="ethnicity category-section-body">
+                          <button type="button" value="cinematic">Cinematic</button>
+                          <button type="button" value="anime">Anime</button>
+                          <button type="button" value="art">Art</button>
+                          <button type="button" value="hyperanime">Hyperanime</button>
+                          <button type="button" value="k-pop">K-pop</button>
+                          <button type="button" value="fur">Fur</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button type="button" class="primary-btn-type spacingBottom">Edit</button>
+                  </div>
+                </div>
+            </div>
+            <div class="image-section">
+               <!-- Display the generated image here -->
+               <div data-tracking-id="{{ tracking_id }}" id="trackingIdContainer">
+                  <div>
+                    <img src="{% if image %}{{ image.url }}{% else %}https://aihentaigenerator.net/wp-content/uploads/2023/11/AIGDefaultimage.png{% endif %}" id="generatedImage" alt="AI Hentai Generator">
+                  </div>
+                  <div class="page-body-footer">
+                    <div class="report-edit-btn-group">
+                      <button type="button" class="report-btn" id="reportImage">
+                        <span class="material-symbols-outlined">
+                          warning
+                          </span>
+                          Report Image</button>
+                    </div>
+
+                    <div class="report-reason-part">
+                      <div class="report-modal" id="reportModal" style="display: none;">
+                          <select id="reportReason">
+                            <option value="deepfake">Deepfake</option>
+                            <option value="illegalcontent">Illegal content</option>
+                            <option value="other">Other</option>
+                            <option value="underageperson">Underage person</option>
+                            <option value="personaldata">Personal data</option>
+                            <option value="publicname">Public name</option>
+                            <option value="dmca">DMCA</option>
+                          </select>
+                          <button class="primary-btn-type" id="sendReportButton">Send Report</button>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      </div>
+         {% include 'modal.html' %}
+      </div>
+      <footer>
+        <p>
+          &copy; 2024 AI Hentai Generator. All rights reserved. |
+          <a href="https://info.aihentaigenerator.net/privacy-policy/"
+            >Privacy Policy</a
+          >
+          |
+          <a href="https://info.aihentaigenerator.net/child-protection/"
+            >Child Protection</a
+          >
+          |
+          <a href="https://info.aihentaigenerator.net/terms-of-service/"
+            >Terms of Service</a
+          >
+        </p>
+      </footer>
+      <script src="https://js.stripe.com/v3/"></script>
+      <script type="text/javascript" id="pap_x2s6df8d" src="https://aicreations.postaffiliatepro.com/scripts/kumajalw"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+         window.trackingId = "{{ tracking_id }}";
+
+      </script>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HGLWRKMWZE"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+
+         gtag('config', 'G-HGLWRKMWZE');
+      </script>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-JY64H3024L"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+
+         gtag('config', 'G-JY64H3024L');
+      </script>
+      <script>
+        function onTogglePremium() {
+          var element = document.getElementById("premBox");
+          element.classList.toggle("premBoxToggle");
+        }
+
+        const tabs = document.querySelectorAll('.category-section-header');
+
+        // Functions
+        toggleCategory = (event) => {
+          event.currentTarget.classList.toggle('inactive-body');
+        };
+
+        // Event Listeners
+        tabs.forEach((tab) => {
+          tab.addEventListener('click', toggleCategory);
+        });
+
+         $('#checkout-button').on('click', function() {
+             $.post('/create-checkout-session', function(data) {
+                 var sessionId = data.sessionId;
+
+                 // Redirect to the Stripe-hosted checkout page
+                 stripe.redirectToCheckout({ sessionId: sessionId });
+             });
+         });
+
+         $(document).ready(function() {
+            $("#color_mode").on("change", function () {
+                colorModePreview(this);
+            })
+        });
+      </script>
+
+      <script src="{{ url_for('static', filename='script.js') }}"></script>
+      <!-- Include jQuery library -->
+   </body>
+</html>
